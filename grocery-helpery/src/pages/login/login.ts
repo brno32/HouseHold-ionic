@@ -16,6 +16,7 @@ export class LoginPage {
 
 
   constructor(public navCtrl: NavController, public toastCtrl: ToastController) {
+
   }
 
   login() {
@@ -23,7 +24,7 @@ export class LoginPage {
       console.log(user)
 
       this.toastCtrl.create({
-        message: "Welcome: " + user.user.displayName,
+        message: "Welcome, " + user.user.displayName + "!",
         duration: 3000,
       }).present();
 
