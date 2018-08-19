@@ -4,6 +4,8 @@ import { LoginPage } from '../login/login';
 
 import firebase from 'firebase';
 
+import { FeedPage } from '../feed/feed';
+
 @Component({
   selector: 'page-list',
   templateUrl: 'list.html'
@@ -24,6 +26,10 @@ export class ListPage {
 
       this.navCtrl.setRoot(LoginPage);
     });
+  }
+
+  goToFeed() {
+    this.navCtrl.setRoot(FeedPage);
   }
 
 }

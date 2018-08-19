@@ -1,12 +1,51 @@
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>feed</ion-title>
+  <ion-navbar color="primary">
+    <ion-title>Your HouseHold</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only clear (click)="goToList()"><ion-icon name="list-box"></ion-icon></button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+
+  <ion-refresher (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-card *ngFor="let post of posts">
+    <ion-item-divider color="primary">
+      {{ post.data().owner_name }} says
+    </ion-item-divider>
+    <ion-item text-wrap>
+      {{ post.data().text }}
+    </ion-item>
+    <ion-row class="bottom-bar">
+      <ion-col>
+        <button ion-button block icon-left clear small color="primary" class="border-right">
+          <ion-icon name="thumbs-up"></ion-icon>
+          <small>12 likes</small>
+        </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button block icon-left clear small color="primary" class="border-right">
+          <ion-icon name="text"></ion-icon>
+          <small>12 Comments</small>
+        </button>
+      </ion-col>
+      <ion-col>
+        <button ion-button block icon-left clear small color="primary">
+          <small>{{ ago(post.data().created.toDate()) }}</small>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+
+  <ion-infinite-scroll (ionInfinite)="loadMorePosts($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 
 </ion-content>

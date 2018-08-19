@@ -1,10 +1,7 @@
 <ion-header>
   <ion-navbar color="primary">
-    <ion-title>
-      Grocery Helper
-    </ion-title>
-    <ion-buttons end>
-      <button ion-button icon-only clear color="light"><ion-icon name="list-box"></ion-icon></button>
+    <ion-buttons>
+      <button ion-button icon-only clear color="light" (click)="goToFeed()"><ion-icon name="home"></ion-icon></button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
@@ -13,12 +10,12 @@
   <ion-grid style="width: 85%;">
     <ion-row>
       <button ion-button class="button-block" color="primary" round large outline>
-        All items
+        Produce
       </button>
     </ion-row>
     <ion-row>
       <button ion-button class="button-block" color="primary" round large outline>
-        Items by Category
+        Grains
       </button>
     </ion-row>
   </ion-grid>

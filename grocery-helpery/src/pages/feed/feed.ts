@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 
-import firebase from 'firebase';
+import { ListPage } from '../list/list';
+
+// import firebase from 'firebase';
 
 @Component({
   selector: 'page-feed',
@@ -14,6 +16,10 @@ export class FeedPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad FeedPage');
+  }
+
+  goToList() {
+    this.navCtrl.setRoot(ListPage)
   }
 
 }
