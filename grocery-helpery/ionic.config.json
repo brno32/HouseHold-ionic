@@ -1,0 +1,7 @@
+{
+  "name": "grocery-helpery",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
