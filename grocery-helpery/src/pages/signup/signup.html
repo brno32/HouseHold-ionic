@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-navbar color="primary">
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding text-center>
+  <ion-item text-center no-lines class="logo">
+    <ion-icon name="list-box" class="logo" color="light"></ion-icon>
+  </ion-item>
+
+  <ion-item text-center no-lines>
+    <h1 ion-text color="light">Grocery Helper</h1>
+    <h6 ion-text color="light">Don't forget!</h6>
+  </ion-item>
+
+  <ion-grid style="width: 75%;">
+    <ion-row class="rowStyle">
+      <ion-icon name="person" color="primary"></ion-icon>
+      <ion-input type="text" placeholder="your name" [(ngModel)]="name"></ion-input>
+    </ion-row>
+    <ion-row class="rowStyle">
+      <ion-icon name="mail" color="primary"></ion-icon>
+      <ion-input type="email" placeholder="your email" [(ngModel)]="email"></ion-input>
+    </ion-row>
+    <ion-row class="rowStyle">
+      <ion-icon name="key" color="primary"></ion-icon>
+      <ion-input type="password" placeholder="your password" [(ngModel)]="password"></ion-input>
+    </ion-row>
+    <ion-row>
+      <button ion-button block round outline color="light" (click)="signUp()">Sign Up</button>
+    </ion-row>
+  </ion-grid>
+
+  <button ion-button block clear color="light" (click)="goBack()">
+  Already have an account? Login!
+  </button>
+
+</ion-content>
