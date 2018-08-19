@@ -8,7 +8,7 @@ import { MyApp } from './app.component';
 import { LoginPage } from '../pages/login/login';
 import { SignupPage } from '../pages/signup/signup'
 import { FeedPage } from '../pages/feed/feed'
-import { HomePage } from '../pages/home/home';
+import { ListPage } from '../pages/list/list';
 
 import firebase from 'firebase';
 
@@ -32,7 +32,7 @@ firebase.firestore().settings({
     LoginPage,
     SignupPage,
     FeedPage,
-    HomePage,
+    ListPage,
   ],
   imports: [
     BrowserModule,
@@ -44,7 +44,7 @@ firebase.firestore().settings({
     LoginPage,
     SignupPage,
     FeedPage,
-    HomePage,
+    ListPage,
   ],
   providers: [
     StatusBar,

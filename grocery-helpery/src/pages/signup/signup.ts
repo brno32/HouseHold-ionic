@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
-import { HomePage } from '../home/home';
+import { FeedPage } from '../feed/feed';
 
 import firebase from 'firebase';
 
@@ -38,7 +38,7 @@ export class SignupPage {
               {
                 text: "Ok",
                 handler: () => {
-                  this.navCtrl.setRoot(HomePage)
+                  this.navCtrl.setRoot(FeedPage)
                 }
               }
             ],

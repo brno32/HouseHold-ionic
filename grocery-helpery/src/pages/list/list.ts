@@ -5,10 +5,10 @@ import { LoginPage } from '../login/login';
 import firebase from 'firebase';
 
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
+  selector: 'page-list',
+  templateUrl: 'list.html'
 })
-export class HomePage {
+export class ListPage {
 
   constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
 import { SignupPage } from '../signup/signup';
-import { HomePage } from '../home/home';
+import { FeedPage } from '../feed/feed';
 
 import firebase from 'firebase';
 
@@ -28,7 +28,7 @@ export class LoginPage {
         duration: 3000,
       }).present();
 
-      this.navCtrl.setRoot(HomePage)
+      this.navCtrl.setRoot(FeedPage)
 
   }).catch((err) => {
     console.log(err);
