@@ -14,9 +14,19 @@ export class LoginPage {
   email: string = '';
   password: string = '';
 
-
   constructor(public navCtrl: NavController, public toastCtrl: ToastController) {
 
+  }
+
+  ionViewWillEnter() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in.
+        this.navCtrl.setRoot(FeedPage)
+      } else {
+        // No user is signed in.
+      }
+    });
   }
 
   login() {

@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { NavController, LoadingController, ToastController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
+import { FeedPage } from '../feed/feed';
 import { ListCategoryPage } from '../list-category/list-category'
 
 import firebase from 'firebase';
-
-import { FeedPage } from '../feed/feed';
 
 @Component({
   selector: 'page-list',
