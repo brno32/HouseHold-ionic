@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, LoadingController, ToastController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
+import { ListCategoryPage } from '../list-category/list-category'
 
 import firebase from 'firebase';
 
@@ -30,6 +31,10 @@ export class ListPage {
 
   goToFeed() {
     this.navCtrl.setRoot(FeedPage);
+  }
+
+  goToCategory() {
+    this.navCtrl.push(ListCategoryPage);
   }
 
 }

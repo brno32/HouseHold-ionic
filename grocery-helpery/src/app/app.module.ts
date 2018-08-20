@@ -9,6 +9,7 @@ import { LoginPage } from '../pages/login/login';
 import { SignupPage } from '../pages/signup/signup'
 import { FeedPage } from '../pages/feed/feed'
 import { ListPage } from '../pages/list/list';
+import { ListCategoryPage } from '../pages/list-category/list-category'
 
 import firebase from 'firebase';
 
@@ -33,6 +34,7 @@ firebase.firestore().settings({
     SignupPage,
     FeedPage,
     ListPage,
+    ListCategoryPage,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +47,7 @@ firebase.firestore().settings({
     SignupPage,
     FeedPage,
     ListPage,
+    ListCategoryPage,
   ],
   providers: [
     StatusBar,
