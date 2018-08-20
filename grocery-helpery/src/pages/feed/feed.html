@@ -2,7 +2,9 @@
   <ion-navbar color="primary">
     <ion-title>Your HouseHold</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only clear color="light" (click)="goToList()"><ion-icon name="list-box"></ion-icon></button>
+      <button ion-button icon-only clear color="light" (click)="goToList()">
+        <ion-icon name="list-box"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
@@ -12,7 +14,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-list>
+  <ion-list no-lines>
     <ion-item *ngFor="let item of [1,2,3,4,5]">
       <ion-avatar item-start>
         <img src="../../assets/icon/favicon.ico">
