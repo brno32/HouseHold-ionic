@@ -5,17 +5,17 @@
 
   <ion-item text-center no-lines>
     <h1 ion-text color="light">HouseHold</h1>
-    <h6 ion-text color="light">Social media for the family grocery list</h6>
+    <h6 ion-text color="light">Social media for the family</h6>
   </ion-item>
 
   <ion-grid style="width: 75%;">
     <ion-row class="rowStyle">
       <ion-icon name="mail" color="primary"></ion-icon>
-      <ion-input type="email" placeholder="your email" [(ngModel)]="email"></ion-input>
+      <ion-input type="email" placeholder="email address" [(ngModel)]="email"></ion-input>
     </ion-row>
     <ion-row class="rowStyle">
       <ion-icon name="key" color="primary"></ion-icon>
-      <ion-input type="password" placeholder="your password" [(ngModel)]="password"></ion-input>
+      <ion-input type="password" placeholder="password" [(ngModel)]="password"></ion-input>
     </ion-row>
     <ion-row>
       <button ion-button block round outline color="light" (click)="login()">Login</button>
