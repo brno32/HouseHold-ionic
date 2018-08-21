@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { NavController, LoadingController, ToastController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { FeedPage } from '../feed/feed';
-import { ListCategoryPage } from '../list-category/list-category'
 
 import firebase from 'firebase';
 
@@ -11,6 +10,13 @@ import firebase from 'firebase';
   templateUrl: 'list.html'
 })
 export class ListPage {
+
+  items = [
+    'Eggs',
+    'Breads',
+    'Cheese',
+    'Ham',
+  ]
 
   categories = [
     'Produce',

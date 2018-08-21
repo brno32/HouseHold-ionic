@@ -8,61 +8,12 @@
 
 <ion-content padding>
   <ion-list>
-      <ion-label>Produce</ion-label>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-label>Grains</ion-label>
-    <ion-label>Dairy</ion-label>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-label>Piss</ion-label>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Eggs</ion-label>
-      <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
-    </ion-item>
+    <div *ngFor="let category of categories">
+      <ion-label>{{category}}</ion-label>
+      <ion-item *ngFor="let item of items">
+        <ion-label>{{item}}</ion-label>
+        <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
+      </ion-item>
+    </div>
   </ion-list>
 </ion-content>
