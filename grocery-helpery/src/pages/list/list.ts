@@ -99,6 +99,20 @@ export class ListPage {
 
   updateItem(item) {
     item.isChecked = !item.isChecked
-    // TODO: toggle in database
+
+    firebase.firestore().collection("lists").doc("WHrTI5tgyqV57TNNy6Qz").set(item).then((doc) => {
+
+      let toast = this.toastCtrl.create({
+        message: "Item successfully updated",
+        duration: 3000,
+      }).present();
+
+      this.getPosts();
+
+    }).catch((err) => {
+
+      console.log(err);
+
+    })
   }
 }
