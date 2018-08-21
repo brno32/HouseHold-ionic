@@ -8,11 +8,11 @@
 
 <ion-content padding>
   <ion-list>
-    <div *ngFor="let category of categories">
+    <div *ngFor="let category of populatedCategories">
       <ion-label>{{category}}</ion-label>
-      <ion-item *ngFor="let item of items">
-        <ion-label>{{item}}</ion-label>
-        <ion-checkbox [(ngModel)]="eggs"></ion-checkbox>
+      <ion-item *ngFor="let item of categorized_list[category]">
+        <ion-label>{{item.name}}</ion-label>
+        <ion-checkbox [(ngModel)]="item.isChecked"></ion-checkbox>
       </ion-item>
     </div>
   </ion-list>

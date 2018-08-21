@@ -7,7 +7,7 @@ import firebase from 'firebase';
 
 @Component({
   selector: 'page-list',
-  templateUrl: 'list.html'
+  templateUrl: 'list.html',
 })
 export class ListPage {
 
@@ -35,7 +35,11 @@ export class ListPage {
     'Miscellaneous',
   ]
 
+  populatedCategories = new Set([])
+
   items = []
+
+  categorized_list: any = {}
 
   constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
     this.getItems()
@@ -74,14 +78,23 @@ export class ListPage {
         let group_data = group_obj.data()
         let grocery_list = group_data.list
 
-        for (let item of grocery_list) {
-          this.items.push(item.name)
-        }
+        this.sortItems(grocery_list)
 
       }).catch((err) => {
         console.log(err);
     })
 
     loading.dismiss();
+  }
+
+  sortItems(grocery_list) {
+    for (let item of grocery_list) {
+      this.categorized_list[item.category] = []
+      this.populatedCategories.add(item.category)
+    }
+
+    for (let item of grocery_list) {
+      this.categorized_list[item.category].push(item)
+    }
   }
 }
