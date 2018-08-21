@@ -11,12 +11,8 @@ import firebase from 'firebase';
 })
 export class ListPage {
 
-  items = [
-    'Eggs',
-    'Breads',
-    'Cheese',
-    'Ham',
-  ]
+  pageSize = 15
+  cursor : any
 
   categories = [
     'Produce',
@@ -39,8 +35,10 @@ export class ListPage {
     'Miscellaneous',
   ]
 
-  constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
+  items = []
 
+  constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
+    this.getItems()
   }
 
   logout() {
@@ -59,4 +57,31 @@ export class ListPage {
     this.navCtrl.setRoot(FeedPage);
   }
 
+  getItems() {
+    this.items = []
+
+    let loading = this.loadingCtrl.create({
+      content: "Loading feed..."
+    });
+
+    loading.present();
+
+    let group = firebase.firestore().collection("groups").doc("LTHca0it5AwtUh7hsc4N")
+
+    group.get()
+      .then((group_obj) => {
+
+        let group_data = group_obj.data()
+        let grocery_list = group_data.list
+
+        for (let item of grocery_list) {
+          this.items.push(item.name)
+        }
+
+      }).catch((err) => {
+        console.log(err);
+    })
+
+    loading.dismiss();
+  }
 }
