@@ -11,10 +11,30 @@ import firebase from 'firebase';
   templateUrl: 'list.html'
 })
 export class ListPage {
-
   constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
 
   }
+
+  categories = [
+    'Produce',
+    'Breads',
+    'Grains',
+    'Breakfast',
+    'Dairy',
+    'Canned Foods',
+    'Condiments',
+    'Baking',
+    'Seasonings',
+    'Nuts',
+    'Chips',
+    'Beverages',
+    'Refrigerated',
+    'Frozen',
+    'Cleaning Products',
+    'Toiletries',
+    'Pet Care',
+    'Miscellaneous',
+  ]
 
   logout() {
     firebase.auth().signOut().then(() => {
