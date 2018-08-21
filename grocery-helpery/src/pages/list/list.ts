@@ -39,10 +39,14 @@ export class ListPage {
 
   items = []
 
-  categorized_list: any = {}
+  categorized_list = {}
 
   constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
     this.getItems()
+
+    for (let category of this.categories) {
+      this.categorized_list[category] = []
+    }
   }
 
   logout() {
@@ -70,14 +74,13 @@ export class ListPage {
 
     loading.present();
 
-    let list = firebase.firestore().collection("lists").doc("WHrTI5tgyqV57TNNy6Qz")
+    let list = firebase.firestore().collection("items")
 
     list.get()
-      .then((list_obj) => {
-        let list_data = list_obj.data()
-        let grocery_list = list_data.items
-
-        this.sortItems(grocery_list)
+      .then((docs) => {
+        docs.forEach((doc) => {
+          this.sortItem(doc.data())
+        })
 
       }).catch((err) => {
         console.log(err);
@@ -86,33 +89,27 @@ export class ListPage {
     loading.dismiss();
   }
 
-  sortItems(grocery_list) {
-    for (let item of grocery_list) {
-      this.categorized_list[item.category] = []
-      this.populatedCategories.add(item.category)
-    }
-
-    for (let item of grocery_list) {
-      this.categorized_list[item.category].push(item)
-    }
+  sortItem(item) {
+    this.populatedCategories.add(item.category)
+    this.categorized_list[item.category].push(item)
   }
 
   updateItem(item) {
     item.isChecked = !item.isChecked
 
-    firebase.firestore().collection("lists").doc("WHrTI5tgyqV57TNNy6Qz").set(item).then((doc) => {
-
-      let toast = this.toastCtrl.create({
-        message: "Item successfully updated",
-        duration: 3000,
-      }).present();
-
-      this.getPosts();
-
-    }).catch((err) => {
-
-      console.log(err);
-
-    })
+    // firebase.firestore().collection("lists").doc("WHrTI5tgyqV57TNNy6Qz").set(item).then((doc) => {
+    //
+    //   let toast = this.toastCtrl.create({
+    //     message: "Item successfully updated",
+    //     duration: 3000,
+    //   }).present();
+    //
+    //   this.getPosts();
+    //
+    // }).catch((err) => {
+    //
+    //   console.log(err);
+    //
+    // })
   }
 }
