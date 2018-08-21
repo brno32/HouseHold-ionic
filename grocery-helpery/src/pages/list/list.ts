@@ -79,7 +79,7 @@ export class ListPage {
     list.get()
       .then((docs) => {
         docs.forEach((doc) => {
-          this.sortItem(doc.data())
+          this.sortItem(doc.id, doc.data())
         })
 
       }).catch((err) => {
@@ -89,27 +89,24 @@ export class ListPage {
     loading.dismiss();
   }
 
-  sortItem(item) {
+  sortItem(id, item) {
     this.populatedCategories.add(item.category)
+    item['id'] = id
     this.categorized_list[item.category].push(item)
   }
 
   updateItem(item) {
-    item.isChecked = !item.isChecked
+    firebase.firestore().collection("items").doc(item.id).update(item).then((doc) => {
 
-    // firebase.firestore().collection("lists").doc("WHrTI5tgyqV57TNNy6Qz").set(item).then((doc) => {
-    //
-    //   let toast = this.toastCtrl.create({
-    //     message: "Item successfully updated",
-    //     duration: 3000,
-    //   }).present();
-    //
-    //   this.getPosts();
-    //
-    // }).catch((err) => {
-    //
-    //   console.log(err);
-    //
-    // })
+      let toast = this.toastCtrl.create({
+        message: "Item successfully updated",
+        duration: 3000,
+      }).present();
+
+    }).catch((err) => {
+
+      console.log(err);
+
+    })
   }
 }
