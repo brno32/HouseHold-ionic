@@ -11,7 +11,7 @@ import { ListPage } from '../pages/list/list';
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = ListPage;
+  rootPage:any = LoginPage;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     platform.ready().then(() => {

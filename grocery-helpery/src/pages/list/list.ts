@@ -70,13 +70,12 @@ export class ListPage {
 
     loading.present();
 
-    let group = firebase.firestore().collection("groups").doc("LTHca0it5AwtUh7hsc4N")
+    let list = firebase.firestore().collection("lists").doc("WHrTI5tgyqV57TNNy6Qz")
 
-    group.get()
-      .then((group_obj) => {
-
-        let group_data = group_obj.data()
-        let grocery_list = group_data.list
+    list.get()
+      .then((list_obj) => {
+        let list_data = list_obj.data()
+        let grocery_list = list_data.items
 
         this.sortItems(grocery_list)
 
@@ -96,5 +95,10 @@ export class ListPage {
     for (let item of grocery_list) {
       this.categorized_list[item.category].push(item)
     }
+  }
+
+  updateItem(item) {
+    item.isChecked = !item.isChecked
+    // TODO: toggle in database
   }
 }
