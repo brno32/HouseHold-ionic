@@ -11,9 +11,6 @@ import firebase from 'firebase';
   templateUrl: 'list.html'
 })
 export class ListPage {
-  constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
-
-  }
 
   categories = [
     'Produce',
@@ -36,6 +33,10 @@ export class ListPage {
     'Miscellaneous',
   ]
 
+  constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
+
+  }
+
   logout() {
     firebase.auth().signOut().then(() => {
 
@@ -50,10 +51,6 @@ export class ListPage {
 
   goToFeed() {
     this.navCtrl.setRoot(FeedPage);
-  }
-
-  goToCategory() {
-    this.navCtrl.push(ListCategoryPage);
   }
 
 }
