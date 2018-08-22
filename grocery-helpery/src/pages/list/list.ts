@@ -20,6 +20,7 @@ export class ListPage {
     'Grains',
     'Breakfast',
     'Dairy',
+    'Meats',
     'Canned Foods',
     'Condiments',
     'Baking',
@@ -98,17 +99,48 @@ export class ListPage {
     })
   }
 
-  addItemPrompt() {
-    let prompt = this.alertCtrl.create({
-    title: 'Add Item',
+  selectCategoryPrompt() {
+    let radio_buttons = []
+    for (let category of this.categories) {
+      category = {
+        type: 'radio',
+        value: category,
+        label: category,
+      }
+      radio_buttons.push(category)
+    }
+
+    let category_prompt = this.alertCtrl.create({
+      title: 'Which Category?',
+      inputs: radio_buttons,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Continue',
+          handler: data => {
+            this.addItemPrompt(data)
+          }
+        }
+      ]
+    })
+
+    category_prompt.present();
+  }
+
+  addItemPrompt(category) {
+
+    let item_prompt = this.alertCtrl.create({
+    title: 'Add Item to ' + category,
     inputs: [
       {
         name: 'name',
         placeholder: 'Name of item'
-      },
-      {
-        name: 'category',
-        placeholder: 'Produce, Grains, etc...',
       }
     ],
     buttons: [
@@ -124,7 +156,7 @@ export class ListPage {
         handler: data => {
           firebase.firestore().collection("items").add({
           name: data.name,
-          category: data.category,
+          category: category,
           isChecked: false,
           }).then((doc) => {
             let toast = this.toastCtrl.create({
@@ -138,8 +170,9 @@ export class ListPage {
         }
       }
     ]
-    });
-    prompt.present();
+    })
+
+    item_prompt.present();
   }
 
   logout() {
