@@ -11,7 +11,7 @@
   <ion-list>
     <div *ngFor="let category of populatedCategories">
       <ion-label>{{category}}</ion-label>
-      <ion-item *ngFor="let item of categorized_list[category]">
+      <ion-item *ngFor="let item of categorized_items[category]">
         <ion-label>{{item.name}}</ion-label>
         <ion-checkbox [(ngModel)]="item.isChecked" (click)="updateItem(item)"></ion-checkbox>
       </ion-item>

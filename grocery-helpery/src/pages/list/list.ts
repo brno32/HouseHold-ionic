@@ -35,11 +35,8 @@ export class ListPage {
     'Miscellaneous',
   ]
 
-  populatedCategories = new Set([])
-
-  items = []
-
-  categorized_list = {}
+  populatedCategories : string[]
+  categorized_items = {}
 
   constructor(
     public navCtrl: NavController,
@@ -47,18 +44,18 @@ export class ListPage {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
   ) {
-
-    this.getItems()
+    this.loadItems()
   }
 
   goToFeed() {
     this.navCtrl.setRoot(FeedPage);
   }
 
-  getItems() {
-    this.items = []
+  loadItems() {
     this.populatedCategories = new Set([])
-    this.categorized_list = {}
+    for (let category of this.categories) {
+      this.categorized_items[category] = []
+    }
 
     let loading = this.loadingCtrl.create({
       content: "Loading feed..."
@@ -71,7 +68,9 @@ export class ListPage {
     list.get()
       .then((docs) => {
         docs.forEach((doc) => {
-          this.sortItem(doc.id, doc.data())
+          let item = doc.data()
+          item['id'] = doc.id
+          this.sortItem(item)
         })
 
       }).catch((err) => {
@@ -79,16 +78,11 @@ export class ListPage {
     })
 
     loading.dismiss();
-
-    for (let category of this.categories) {
-      this.categorized_list[category] = []
-    }
   }
 
-  sortItem(id, item) {
+  sortItem(item) {
     this.populatedCategories.add(item.category)
-    item['id'] = id
-    this.categorized_list[item.category].push(item)
+    this.categorized_items[item.category].push(item)
   }
 
   updateItem(item) {
@@ -100,9 +94,7 @@ export class ListPage {
       }).present();
 
     }).catch((err) => {
-
       console.log(err);
-
     })
   }
 
@@ -139,7 +131,7 @@ export class ListPage {
               message: "Item successfully added",
               duration: 3000,
             }).present();
-            this.getItems()
+            this.loadItems()
           }).catch((err) => {
             console.log(err);
           })
