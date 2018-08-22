@@ -160,9 +160,9 @@ export class ListPage {
         text: 'Add',
         handler: data => {
           firebase.firestore().collection("items").add({
-          name: data.name,
-          category: category,
-          isChecked: false,
+            name: data.name,
+            category: category,
+            isChecked: false,
           }).then((doc) => {
             let toast = this.toastCtrl.create({
               message: "Item successfully added",

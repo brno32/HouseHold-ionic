@@ -40,22 +40,6 @@ export class FeedPage {
 
     let query = firebase.firestore().collection("logs").orderBy("created", "desc").limit(this.pageSize);
 
-    //query.onSnapshot((snapshot) => {
-    //  let changedDocs = snapshot.docChanges();
-
-    //  changedDocs.forEach((change) => {
-    //    if (change.type == "added") {
-
-    //    }
-    //    if (change.type == "modified") {
-
-    //    }
-    //    if (change.type == "removed") {
-
-    //    }
-    //  })
-    //})
-
     query.get()
       .then((docs) => {
 
@@ -75,26 +59,7 @@ export class FeedPage {
   }
 
   loadMoreLogs(event) {
-    // firebase.firestore().collection("logs").orderBy("created", "desc").startAfter(this.cursor).limit(this.pageSize).get()
-    //   .then((docs) => {
-    //     docs.forEach((doc) => {
-    //       this.logs.push(doc)
-    //     })
-    //     console.log(this.logs);
-    //
-    //     if (docs.size < this.pageSize) {
-    //       // done
-    //       event.enable(false);
-    //       this.infiniteEvent = event;
-    //     }
-    //     else {
-    //       event.complete();
-    //       this.cursor = this.logs[this.logs.length - 1];
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   })
+    // Do nothing for now
   }
 
   refresh(event) {
@@ -131,16 +96,16 @@ export class FeedPage {
     return moment.duration(difference).humanize();
   }
 
-  // logout() {
-  //   firebase.auth().signOut().then(() => {
-  //
-  //     let toast = this.toastCtrl.create({
-  //       message: "Logged out",
-  //       duration: 3000,
-  //     }).present();
-  //
-  //     this.navCtrl.setRoot(LoginPage);
-  //   });
-  // }
+  logout() {
+    firebase.auth().signOut().then(() => {
+
+      let toast = this.toastCtrl.create({
+        message: "Logged out",
+        duration: 3000,
+      }).present();
+
+      this.navCtrl.setRoot(LoginPage);
+    });
+  }
 
 }
