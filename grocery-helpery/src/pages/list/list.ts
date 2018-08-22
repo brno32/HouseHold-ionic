@@ -36,7 +36,7 @@ export class ListPage {
     'Miscellaneous',
   ]
 
-  populatedCategories : string[]
+  populatedCategories = new Set([])
   categorized_items = {}
 
   constructor(
@@ -53,7 +53,7 @@ export class ListPage {
   }
 
   checkIfPopulated(category) {
-    let populatedCategories = Array.from(this.populatedCategories);
+    let populatedCategories : string[] = Array.from(this.populatedCategories);
     return populatedCategories.includes(category)
   }
 
@@ -107,12 +107,12 @@ export class ListPage {
   selectCategoryPrompt() {
     let radio_buttons = []
     for (let category of this.categories) {
-      category = {
+      let category_obj = {
         type: 'radio',
         value: category,
         label: category,
       }
-      radio_buttons.push(category)
+      radio_buttons.push(category_obj)
     }
 
     let category_prompt = this.alertCtrl.create({
