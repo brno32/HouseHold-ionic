@@ -52,6 +52,11 @@ export class ListPage {
     this.navCtrl.setRoot(FeedPage);
   }
 
+  checkIfPopulated(category) {
+    let populatedCategories = Array.from(this.populatedCategories);
+    return populatedCategories.includes(category)
+  }
+
   loadItems() {
     this.populatedCategories = new Set([])
     for (let category of this.categories) {
