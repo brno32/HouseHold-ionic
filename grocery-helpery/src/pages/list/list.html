@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-buttons>
+      <button ion-button icon-only clear color="light" (click)="goToFeed()"><ion-icon name="home"></ion-icon></button>
+      <button ion-button icon-only clear color="light" (click)="selectCategoryPrompt()" style="float: right;"><ion-icon name="add"></ion-icon></button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <div *ngFor="let category of categories">
+      <div *ngIf="checkIfPopulated(category)">
+        <ion-label>{{category}}</ion-label>
+        <ion-item *ngFor="let item of categorized_items[category]">
+          <ion-label>{{item.name}}</ion-label>
+          <ion-checkbox [(ngModel)]="item.isChecked" (click)="updateItem(item)"></ion-checkbox>
+        </ion-item>
+      </div>
+    </div>
+  </ion-list>
+</ion-content>

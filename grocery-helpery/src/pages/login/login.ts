@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
+import { SignupPage } from '../signup/signup';
+import { FeedPage } from '../feed/feed';
 
 import firebase from 'firebase';
 
@@ -12,8 +14,19 @@ export class LoginPage {
   email: string = '';
   password: string = '';
 
-
   constructor(public navCtrl: NavController, public toastCtrl: ToastController) {
+
+  }
+
+  ionViewWillEnter() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in.
+        this.navCtrl.setRoot(FeedPage)
+      } else {
+        // No user is signed in.
+      }
+    });
   }
 
   login() {
@@ -21,11 +34,11 @@ export class LoginPage {
       console.log(user)
 
       this.toastCtrl.create({
-        message: "Welcome: " + user.user.displayName,
+        message: "Welcome, " + user.user.displayName + "!",
         duration: 3000,
       }).present();
 
-      //this.navCtrl.setRoot()
+      this.navCtrl.setRoot(FeedPage)
 
   }).catch((err) => {
     console.log(err);
@@ -38,7 +51,7 @@ export class LoginPage {
 }
 
   goToSignUp() {
-    //this.navCtrl.push(SignupPage);
+    this.navCtrl.push(SignupPage);
   }
 
 }
