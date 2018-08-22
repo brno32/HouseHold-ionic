@@ -49,9 +49,6 @@ export class ListPage {
   ) {
 
     this.getItems()
-    for (let category of this.categories) {
-      this.categorized_list[category] = []
-    }
   }
 
   goToFeed() {
@@ -60,6 +57,8 @@ export class ListPage {
 
   getItems() {
     this.items = []
+    this.populatedCategories = new Set([])
+    this.categorized_list = {}
 
     let loading = this.loadingCtrl.create({
       content: "Loading feed..."
@@ -80,6 +79,10 @@ export class ListPage {
     })
 
     loading.dismiss();
+
+    for (let category of this.categories) {
+      this.categorized_list[category] = []
+    }
   }
 
   sortItem(id, item) {
@@ -131,17 +134,15 @@ export class ListPage {
           name: data.name,
           category: data.category,
           isChecked: false,
-        }).then((doc) => {
-          let toast = this.toastCtrl.create({
-            message: "Item successfully added",
-            duration: 3000,
-          }).present();
-
-        }).catch((err) => {
-
-          console.log(err);
-
-        })
+          }).then((doc) => {
+            let toast = this.toastCtrl.create({
+              message: "Item successfully added",
+              duration: 3000,
+            }).present();
+            this.getItems()
+          }).catch((err) => {
+            console.log(err);
+          })
         }
       }
     ]
