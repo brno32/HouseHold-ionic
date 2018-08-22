@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, LoadingController, ToastController } from 'ionic-angular';
+import { NavController, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { FeedPage } from '../feed/feed';
 
@@ -41,24 +41,17 @@ export class ListPage {
 
   categorized_list = {}
 
-  constructor(public navCtrl: NavController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
-    this.getItems()
+  constructor(
+    public navCtrl: NavController,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController,
+    private alertCtrl: AlertController,
+  ) {
 
+    this.getItems()
     for (let category of this.categories) {
       this.categorized_list[category] = []
     }
-  }
-
-  logout() {
-    firebase.auth().signOut().then(() => {
-
-      let toast = this.toastCtrl.create({
-        message: "Logged out",
-        duration: 3000,
-      }).present();
-
-      this.navCtrl.setRoot(LoginPage);
-    });
   }
 
   goToFeed() {
@@ -108,5 +101,63 @@ export class ListPage {
       console.log(err);
 
     })
+  }
+
+  addItemPrompt() {
+    let prompt = this.alertCtrl.create({
+    title: 'Add Item',
+    inputs: [
+      {
+        name: 'name',
+        placeholder: 'Name of item'
+      },
+      {
+        name: 'category',
+        placeholder: 'Produce, Grains, etc...',
+      }
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked');
+        }
+      },
+      {
+        text: 'Add',
+        handler: data => {
+          firebase.firestore().collection("items").add({
+          name: data.name,
+          category: data.category,
+          isChecked: false,
+        }).then((doc) => {
+          let toast = this.toastCtrl.create({
+            message: "Item successfully added",
+            duration: 3000,
+          }).present();
+
+        }).catch((err) => {
+
+          console.log(err);
+
+        })
+        }
+      }
+    ]
+    });
+    prompt.present();
+  }
+
+  logout() {
+    firebase.auth().signOut().then(() => {
+
+      let toast = this.toastCtrl.create({
+        message: "Logged out",
+        duration: 3000,
+      }).present();
+
+      this.navCtrl.setRoot(LoginPage);
+    });
   }
 }
