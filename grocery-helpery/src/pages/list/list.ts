@@ -69,8 +69,110 @@ export class ListPage {
     return populatedCategories.includes(category)
   }
 
-  onHold() {
-    console.log("Open CRUD interface")
+  editItem(item) {
+    let editPrompt = this.alertCtrl.create({
+    title: 'Editing: ' + item.name + ' in ' + item.category,
+    // inputs: [
+    //   {
+    //     text: item.name,
+    //     name: 'name',
+    //     placeholder: 'Name of item'
+    //   }
+    // ],
+    buttons: [
+      {
+        text: 'Edit Item Name',
+        handler: data => {
+          console.log('Edit Item Name clicked');
+          this.editItemName(item)
+        }
+      },
+      {
+        text: 'Edit Item Category',
+        handler: data => {
+          console.log('Edit Item Category clicked');
+        }
+      },
+      {
+        text: 'Delete Item',
+        handler: data => {
+          console.log('Edit Item Category clicked');
+        }
+      },
+      {
+        text: 'Add',
+        handler: data => {
+          // firebase.firestore().collection("items").add({
+          //   name: data.name,
+          //   category: category,
+          //   isChecked: false,
+          // }).then((doc) => {
+          //   let toast = this.toastCtrl.create({
+          //     message: "Added " + data.name + "!",
+          //     duration: 3000,
+          //   }).present();
+          //   this.loadItems()
+          // }).catch((err) => {
+          //   console.log(err);
+          // })
+        }
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked');
+        }
+      },
+    ]
+    })
+
+    editPrompt.present();
+  }
+
+  editItemName(item) {
+    let editItemNamePrompt = this.alertCtrl.create({
+    title: 'Editing: ' + item.name + ' in ' + item.category,
+    inputs: [
+      {
+        name: 'name',
+        placeholder: item.name
+      }
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked');
+        }
+      },
+      {
+        text: 'Update',
+        handler: data => {
+
+          let updatedItem = {
+            id: item.id,
+            name: data.name,
+            category: item.category,
+            isChecked: item.isChecked,
+          }
+
+          firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
+            let toast = this.toastCtrl.create({
+              message: "Updated item!",
+              duration: 3000,
+            }).present();
+            this.loadItems()
+          }).catch((err) => {
+            console.log(err);
+          })
+        }
+      },
+    ]
+    })
+
+    editItemNamePrompt.present();
   }
 
   loadItems() {
@@ -126,19 +228,19 @@ export class ListPage {
   }
 
   selectCategoryPrompt() {
-    let radio_buttons = []
+    let radioButtons = []
     for (let category of this.categories) {
       let category_obj = {
         type: 'radio',
         value: category,
         label: category,
       }
-      radio_buttons.push(category_obj)
+      radioButtons.push(category_obj)
     }
 
-    let category_prompt = this.alertCtrl.create({
+    let categoryPrompt = this.alertCtrl.create({
       title: 'Which Category?',
-      inputs: radio_buttons,
+      inputs: radioButtons,
       buttons: [
         {
           text: 'Cancel',
@@ -156,11 +258,11 @@ export class ListPage {
       ]
     })
 
-    category_prompt.present();
+    categoryPrompt.present();
   }
 
   addItemPrompt(category) {
-    let item_prompt = this.alertCtrl.create({
+    let itemPrompt = this.alertCtrl.create({
     title: 'Add Item to ' + category,
     inputs: [
       {
@@ -196,8 +298,8 @@ export class ListPage {
       }
     ]
     })
-    
-    item_prompt.present();
+
+    itemPrompt.present();
   }
 
   logout() {
