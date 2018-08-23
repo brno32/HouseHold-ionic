@@ -71,7 +71,7 @@ export class ListPage {
 
   editItem(item) {
     let editPrompt = this.alertCtrl.create({
-    title: 'Editing: ' + item.name + ' in ' + item.category,
+    title: item.name + ' in ' + item.category,
     buttons: [
       {
         text: 'Edit Item Name',
@@ -120,6 +120,7 @@ export class ListPage {
         role: 'cancel',
         handler: data => {
           console.log('Cancel clicked')
+          this.editItem(item)
         }
       },
       {
@@ -162,7 +163,7 @@ export class ListPage {
     }
 
     let categoryPrompt = this.alertCtrl.create({
-      title: 'Move ' + item.name,
+      title: 'Move ' + item.name + ' to ',
       inputs: radioButtons,
       buttons: [
         {
@@ -170,6 +171,7 @@ export class ListPage {
           role: 'cancel',
           handler: data => {
             console.log('Cancel clicked');
+            this.editItem(item)
           }
         },
         {
@@ -189,7 +191,7 @@ export class ListPage {
               }).present();
               this.loadItems()
             }).catch((err) => {
-              console.log(err);
+              console.log(err)
             })
           }
         }
@@ -208,6 +210,7 @@ export class ListPage {
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked');
+            this.editItem(item)
           }
         },
         {
