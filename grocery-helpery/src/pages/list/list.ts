@@ -93,9 +93,13 @@ export class ListPage {
 
   updateItem(item) {
     firebase.firestore().collection("items").doc(item.id).update(item).then((doc) => {
+      let verb = "Removed "
+      if (item.isChecked) {
+        verb = "Added "
+      }
 
       let toast = this.toastCtrl.create({
-        message: "Item successfully updated",
+        message: verb + item.name + "!",
         duration: 3000,
       }).present();
 
@@ -165,7 +169,7 @@ export class ListPage {
             isChecked: false,
           }).then((doc) => {
             let toast = this.toastCtrl.create({
-              message: "Item successfully added",
+              message: "Added " + data.name + "!",
               duration: 3000,
             }).present();
             this.loadItems()

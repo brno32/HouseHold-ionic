@@ -4,6 +4,7 @@ import { NavController, LoadingController, ToastController } from 'ionic-angular
 import moment from 'moment';
 import firebase from 'firebase';
 
+import { LoginPage } from '../login/login';
 import { ListPage } from '../list/list';
 
 @Component({
