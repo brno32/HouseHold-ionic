@@ -13,8 +13,9 @@ export class ListPage {
 
   pageSize = 15
   cursor : any
+  infiniteEvent: any
 
-  categories = [
+  readonly categories = [
     'Produce',
     'Breads',
     'Grains',
@@ -39,6 +40,8 @@ export class ListPage {
   populatedCategories = new Set([])
   categorized_items = {}
 
+  numberOfItems : number = 0
+
   constructor(
     public navCtrl: NavController,
     private loadingCtrl: LoadingController,
@@ -52,19 +55,33 @@ export class ListPage {
     this.navCtrl.setRoot(FeedPage);
   }
 
+  refresh(event) {
+    this.loadItems()
+
+    if (this.infiniteEvent != null) {
+      this.infiniteEvent.enable(true)
+    }
+    event.complete()
+  }
+
   checkIfPopulated(category) {
     let populatedCategories : string[] = Array.from(this.populatedCategories);
     return populatedCategories.includes(category)
   }
 
+  onHold() {
+    console.log("Open CRUD interface")
+  }
+
   loadItems() {
+    this.numberOfItems = 0
     this.populatedCategories = new Set([])
     for (let category of this.categories) {
       this.categorized_items[category] = []
     }
 
     let loading = this.loadingCtrl.create({
-      content: "Loading feed..."
+      content: "Loading grocery list..."
     });
 
     loading.present();
@@ -77,8 +94,8 @@ export class ListPage {
           let item = doc.data()
           item['id'] = doc.id
           this.sortItem(item)
+          this.numberOfItems += 1
         })
-
       }).catch((err) => {
         console.log(err);
     })
@@ -143,7 +160,6 @@ export class ListPage {
   }
 
   addItemPrompt(category) {
-
     let item_prompt = this.alertCtrl.create({
     title: 'Add Item to ' + category,
     inputs: [
@@ -180,7 +196,7 @@ export class ListPage {
       }
     ]
     })
-
+    
     item_prompt.present();
   }
 
