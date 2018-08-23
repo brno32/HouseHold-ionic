@@ -52,7 +52,7 @@ export class ListPage {
   }
 
   goToFeed() {
-    this.navCtrl.setRoot(FeedPage);
+    this.navCtrl.setRoot(FeedPage)
   }
 
   refresh(event) {
@@ -218,7 +218,7 @@ export class ListPage {
           handler: () => {
             firebase.firestore().collection("items").doc(item.id).delete().then((doc) => {
               let toast = this.toastCtrl.create({
-                message: "Deleted" + item.name,
+                message: "Deleted " + item.name,
                 duration: 3000,
               }).present();
               this.loadItems()
