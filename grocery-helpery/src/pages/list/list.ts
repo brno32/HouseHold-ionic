@@ -112,6 +112,7 @@ export class ListPage {
       {
         name: 'name',
         placeholder: item.name,
+        value: item.name,
       }
     ],
     buttons: [
