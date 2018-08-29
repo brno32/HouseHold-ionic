@@ -319,6 +319,10 @@ export class ListPage {
     categoryPrompt.present();
   }
 
+  selectCategory(category) {
+    this.addItemPrompt(category)
+  }
+
   addItemPrompt(category) {
     let itemPrompt = this.alertCtrl.create({
     title: 'Add Item to ' + category,
@@ -358,6 +362,30 @@ export class ListPage {
     })
 
     itemPrompt.present();
+  }
+
+  checkout() {
+    let checkoutPrompt = this.alertCtrl.create({
+      title: 'Checkout',
+      message: 'Delete all checked items?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Continue',
+          handler: () => {
+            console.log('Checkout clicked');
+          }
+        }
+      ]
+    })
+
+    checkoutPrompt.present();
   }
 
   logout() {
