@@ -21,9 +21,6 @@ export class SignupPage {
   signUp() {
     firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
       .then((data) => {
-
-        console.log(data);
-
         let newUser: firebase.User = data.user;
         newUser.updateProfile({
           displayName: this.name,
@@ -43,14 +40,12 @@ export class SignupPage {
               }
             ],
           }).present();
-
         }).catch((err) => {
           console.log(err);
         })
 
     }).catch((err) => {
       console.log(err);
-
       this.toastCtrl.create({
         message: err.message,
         duration: 3000,

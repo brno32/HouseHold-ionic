@@ -3,16 +3,21 @@
     <ion-buttons>
       <button ion-button icon-only clear color="light" (click)="goToFeed()"><ion-icon name="home"></ion-icon></button>
       <button ion-button icon-only clear color="light" (click)="selectCategoryPrompt()" style="float: right;"><ion-icon name="add"></ion-icon></button>
+      <button ion-button icon-only clear color="light" (click)="checkout()" style="float: right;" padding-right><ion-icon name="cart"></ion-icon></button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <ion-list>
+  <ion-refresher (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list (swiperight)="goToFeed()">
     <div *ngFor="let category of categories">
       <div *ngIf="checkIfPopulated(category)">
         <ion-label>{{category}}</ion-label>
-        <ion-item *ngFor="let item of categorized_items[category]">
+        <ion-item *ngFor="let item of categorized_items[category]" (press)="editItem(item)">
           <ion-label>{{item.name}}</ion-label>
           <ion-checkbox [(ngModel)]="item.isChecked" (click)="updateItem(item)"></ion-checkbox>
         </ion-item>

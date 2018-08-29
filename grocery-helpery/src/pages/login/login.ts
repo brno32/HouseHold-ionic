@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
 import { SignupPage } from '../signup/signup';
 import { FeedPage } from '../feed/feed';
+import { ListPage } from '../list/list';
 
 import firebase from 'firebase';
 
@@ -22,7 +23,7 @@ export class LoginPage {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
-        this.navCtrl.setRoot(FeedPage)
+        this.navCtrl.setRoot(ListPage)
       } else {
         // No user is signed in.
       }

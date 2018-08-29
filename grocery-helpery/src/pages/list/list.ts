@@ -13,8 +13,9 @@ export class ListPage {
 
   pageSize = 15
   cursor : any
+  infiniteEvent: any
 
-  categories = [
+  readonly categories = [
     'Produce',
     'Breads',
     'Grains',
@@ -39,6 +40,8 @@ export class ListPage {
   populatedCategories = new Set([])
   categorized_items = {}
 
+  numberOfItems : number = 0
+
   constructor(
     public navCtrl: NavController,
     private loadingCtrl: LoadingController,
@@ -49,7 +52,16 @@ export class ListPage {
   }
 
   goToFeed() {
-    this.navCtrl.setRoot(FeedPage);
+    this.navCtrl.setRoot(FeedPage)
+  }
+
+  refresh(event) {
+    this.loadItems()
+
+    if (this.infiniteEvent != null) {
+      this.infiniteEvent.enable(true)
+    }
+    event.complete()
   }
 
   checkIfPopulated(category) {
@@ -57,14 +69,179 @@ export class ListPage {
     return populatedCategories.includes(category)
   }
 
+  editItem(item) {
+    let editPrompt = this.alertCtrl.create({
+    title: item.name + ' in ' + item.category,
+    buttons: [
+      {
+        text: 'Edit Item Name',
+        handler: data => {
+          console.log('Edit Item Name clicked');
+          this.editItemName(item)
+        }
+      },
+      {
+        text: 'Edit Item Category',
+        handler: data => {
+          this.editItemCategory(item)
+        }
+      },
+      {
+        text: 'Delete Item',
+        handler: data => {
+          this.deleteItem(item)
+        }
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked');
+        }
+      },
+    ]
+    })
+
+    editPrompt.present();
+  }
+
+  editItemName(item) {
+    let editItemNamePrompt = this.alertCtrl.create({
+    title: 'Editing: ' + item.name + ' in ' + item.category,
+    inputs: [
+      {
+        name: 'name',
+        placeholder: item.name,
+        value: item.name,
+      }
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked')
+          this.editItem(item)
+        }
+      },
+      {
+        text: 'Update',
+        handler: data => {
+
+          let updatedItem = {
+            id: item.id,
+            name: data.name,
+            category: item.category,
+            isChecked: item.isChecked,
+          }
+
+          firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
+            let toast = this.toastCtrl.create({
+              message: "Updated item!",
+              duration: 3000,
+            }).present();
+            this.loadItems()
+          }).catch((err) => {
+            console.log(err);
+          })
+        }
+      },
+    ]
+    })
+
+    editItemNamePrompt.present();
+  }
+
+  editItemCategory(item) {
+    let radioButtons = []
+    for (let category of this.categories) {
+      let category_obj = {
+        type: 'radio',
+        value: category,
+        label: category,
+      }
+      radioButtons.push(category_obj)
+    }
+
+    let categoryPrompt = this.alertCtrl.create({
+      title: 'Move ' + item.name + ' to ',
+      inputs: radioButtons,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+            this.editItem(item)
+          }
+        },
+        {
+          text: 'Continue',
+          handler: data => {
+            let updatedItem = {
+              id: item.id,
+              name: item.name,
+              category: data,
+              isChecked: item.isChecked,
+            }
+
+            firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
+              let toast = this.toastCtrl.create({
+                message: "Updated item!",
+                duration: 3000,
+              }).present();
+              this.loadItems()
+            }).catch((err) => {
+              console.log(err)
+            })
+          }
+        }
+      ]
+    })
+
+    categoryPrompt.present();
+  }
+
+  deleteItem(item) {
+    let alert = this.alertCtrl.create({
+      message: 'Delete ' + item.name + '?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+            this.editItem(item)
+          }
+        },
+        {
+          text: 'Continue',
+          handler: () => {
+            firebase.firestore().collection("items").doc(item.id).delete().then((doc) => {
+              let toast = this.toastCtrl.create({
+                message: "Deleted " + item.name,
+                duration: 3000,
+              }).present();
+              this.loadItems()
+            }).catch((err) => {
+              console.log(err);
+            })
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
   loadItems() {
+    this.numberOfItems = 0
     this.populatedCategories = new Set([])
     for (let category of this.categories) {
       this.categorized_items[category] = []
     }
 
     let loading = this.loadingCtrl.create({
-      content: "Loading feed..."
+      content: "Loading grocery list..."
     });
 
     loading.present();
@@ -77,8 +254,8 @@ export class ListPage {
           let item = doc.data()
           item['id'] = doc.id
           this.sortItem(item)
+          this.numberOfItems += 1
         })
-
       }).catch((err) => {
         console.log(err);
     })
@@ -93,9 +270,13 @@ export class ListPage {
 
   updateItem(item) {
     firebase.firestore().collection("items").doc(item.id).update(item).then((doc) => {
+      let verb = "Removed "
+      if (item.isChecked) {
+        verb = "Added "
+      }
 
       let toast = this.toastCtrl.create({
-        message: "Item successfully updated",
+        message: verb + item.name + "!",
         duration: 3000,
       }).present();
 
@@ -105,19 +286,19 @@ export class ListPage {
   }
 
   selectCategoryPrompt() {
-    let radio_buttons = []
+    let radioButtons = []
     for (let category of this.categories) {
       let category_obj = {
         type: 'radio',
         value: category,
         label: category,
       }
-      radio_buttons.push(category_obj)
+      radioButtons.push(category_obj)
     }
 
-    let category_prompt = this.alertCtrl.create({
+    let categoryPrompt = this.alertCtrl.create({
       title: 'Which Category?',
-      inputs: radio_buttons,
+      inputs: radioButtons,
       buttons: [
         {
           text: 'Cancel',
@@ -135,12 +316,15 @@ export class ListPage {
       ]
     })
 
-    category_prompt.present();
+    categoryPrompt.present();
+  }
+
+  selectCategory(category) {
+    this.addItemPrompt(category)
   }
 
   addItemPrompt(category) {
-
-    let item_prompt = this.alertCtrl.create({
+    let itemPrompt = this.alertCtrl.create({
     title: 'Add Item to ' + category,
     inputs: [
       {
@@ -160,12 +344,12 @@ export class ListPage {
         text: 'Add',
         handler: data => {
           firebase.firestore().collection("items").add({
-          name: data.name,
-          category: category,
-          isChecked: false,
+            name: data.name,
+            category: category,
+            isChecked: false,
           }).then((doc) => {
             let toast = this.toastCtrl.create({
-              message: "Item successfully added",
+              message: "Added " + data.name + "!",
               duration: 3000,
             }).present();
             this.loadItems()
@@ -177,7 +361,31 @@ export class ListPage {
     ]
     })
 
-    item_prompt.present();
+    itemPrompt.present();
+  }
+
+  checkout() {
+    let checkoutPrompt = this.alertCtrl.create({
+      title: 'Checkout',
+      message: 'Delete all checked items?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Continue',
+          handler: () => {
+            console.log('Checkout clicked');
+          }
+        }
+      ]
+    })
+
+    checkoutPrompt.present();
   }
 
   logout() {
