@@ -3,6 +3,8 @@ import { NavController, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { FeedPage } from '../feed/feed';
 
+import { Camera, CameraOptions } from '@ionic-native/camera'
+
 import firebase from 'firebase';
 
 @Component({
@@ -15,7 +17,12 @@ export class SignupPage {
   email: string = '';
   password: string = '';
 
-  constructor(public navCtrl: NavController, public toastCtrl: ToastController, public alertCtrl: AlertController) {
+  constructor(
+    public camera: Camera,
+    public navCtrl: NavController,
+    public toastCtrl: ToastController,
+    public alertCtrl: AlertController
+  ) {
   }
 
   signUp() {
