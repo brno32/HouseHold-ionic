@@ -7,18 +7,16 @@ import firebase from 'firebase';
 export class FirebaseProvider {
 
   constructor(public http: HttpClient) {
-    console.log('Hello FirebaseProvider Provider');
+    console.log('Hello FirebaseProvider Provider')
   }
 
-
-
   getLogsService() {
-    console.log("Logs loaded");
+    console.log("Logs loaded")
     return firebase.firestore().collection("logs")
   }
 
   getItemsService() {
-    console.log("Items loaded");
+    console.log("Items loaded")
     return firebase.firestore().collection("items")
   }
 
@@ -29,9 +27,9 @@ export class FirebaseProvider {
       owner: firebase.auth().currentUser.uid,
       owner_name: firebase.auth().currentUser.displayName,
     }).then((doc) => {
-      
+
     }).catch((err) => {
-      console.log(err);
+      console.log(err)
     })
   }
 
@@ -43,7 +41,7 @@ export class FirebaseProvider {
     }).then((doc) => {
       console.log(item.name + " added");
     }).catch((err) => {
-      console.log(err);
+      console.log(err)
     })
   }
 
@@ -51,29 +49,29 @@ export class FirebaseProvider {
     firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
       console.log(item.name + " updated");
     }).catch((err) => {
-      console.log(err);
+      console.log(err)
     })
   }
 
   deleteItemService(item) {
     firebase.firestore().collection("items").doc(item.id).delete().then((doc) => {
-      console.log(item.name + " deleted");
+      console.log(item.name + " deleted")
     }).catch((err) => {
-      console.log(err);
+      console.log(err)
     })
   }
 
   checkItemService(item) {
     firebase.firestore().collection("items").doc(item.id).update(item).then((doc) => {
-      console.log(item.name + " checked");
+      console.log(item.name + " checked")
     }).catch((err) => {
-      console.log(err);
+      console.log(err)
     })
   }
 
   logoutService() {
     firebase.auth().signOut().then(() => {
-      console.log("Signed out");
+      console.log("Signed out")
     });
   }
 

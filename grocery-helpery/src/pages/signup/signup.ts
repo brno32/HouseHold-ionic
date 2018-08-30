@@ -13,9 +13,9 @@ import firebase from 'firebase';
 })
 export class SignupPage {
 
-  name: string = '';
-  email: string = '';
-  password: string = '';
+  name: string = ''
+  email: string = ''
+  password: string = ''
 
   constructor(
     public camera: Camera,
@@ -28,7 +28,7 @@ export class SignupPage {
   signUp() {
     firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
       .then((data) => {
-        let newUser: firebase.User = data.user;
+        let newUser: firebase.User = data.user
         newUser.updateProfile({
           displayName: this.name,
           photoURL: "",
@@ -46,22 +46,22 @@ export class SignupPage {
                 }
               }
             ],
-          }).present();
+          }).present()
         }).catch((err) => {
-          console.log(err);
+          console.log(err)
         })
 
     }).catch((err) => {
-      console.log(err);
+      console.log(err)
       this.toastCtrl.create({
         message: err.message,
         duration: 3000,
-      }).present();
+      }).present()
     })
   }
 
   goBack() {
-    this.navCtrl.pop();
+    this.navCtrl.pop()
   }
 
 }

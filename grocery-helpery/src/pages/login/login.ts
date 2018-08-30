@@ -12,8 +12,8 @@ import firebase from 'firebase';
 })
 export class LoginPage {
 
-  email: string = '';
-  password: string = '';
+  email: string = ''
+  password: string = ''
 
   constructor(public navCtrl: NavController, public toastCtrl: ToastController) {
 
@@ -37,22 +37,22 @@ export class LoginPage {
       this.toastCtrl.create({
         message: "Welcome, " + user.user.displayName + "!",
         duration: 3000,
-      }).present();
+      }).present()
 
       this.navCtrl.setRoot(FeedPage)
 
   }).catch((err) => {
-    console.log(err);
+    console.log(err)
 
     this.toastCtrl.create({
       message: err.message,
       duration: 3000,
-    }).present();
+    }).present()
   })
 }
 
   goToSignUp() {
-    this.navCtrl.push(SignupPage);
+    this.navCtrl.push(SignupPage)
   }
 
 }

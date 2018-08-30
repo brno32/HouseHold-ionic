@@ -70,26 +70,26 @@ export class FeedPage {
   }
 
   refresh(event) {
-    this.logs = [];
-    this.getLogs();
+    this.logs = []
+    this.getLogs()
 
     if (this.infiniteEvent != null) {
       this.infiniteEvent.enable(true)
     }
-    event.complete();
+    event.complete()
   }
 
   log() {
 
     const log = {text: "This is a log"}
 
-    this.firebaseProvider().addLogService()
+    this.firebaseProvider().addLogService(log)
 
     let toast = this.toastCtrl.create({
       message: "Message successfully sent",
       duration: 3000,
-    }).present();
-    this.getLogs();
+    }).present()
+    this.getLogs()
   }
 
   ago(time) {

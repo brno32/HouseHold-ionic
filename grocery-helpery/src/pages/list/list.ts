@@ -170,7 +170,7 @@ export class ListPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
+            console.log('Cancel clicked')
             this.editItem(item)
           }
         },
@@ -206,7 +206,7 @@ export class ListPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+            console.log('Cancel clicked')
             this.editItem(item)
           }
         },
@@ -328,7 +328,7 @@ export class ListPage {
         text: 'Cancel',
         role: 'cancel',
         handler: data => {
-          console.log('Cancel clicked');
+          console.log('Cancel clicked')
         }
       },
       {
@@ -370,7 +370,7 @@ export class ListPage {
       ]
     })
 
-    checkoutPrompt.present();
+    checkoutPrompt.present()
   }
 
   logout() {
