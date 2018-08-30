@@ -3,7 +3,7 @@ import { NavController, LoadingController, ToastController, AlertController } fr
 import { LoginPage } from '../login/login';
 import { FeedPage } from '../feed/feed';
 
-import firebase from 'firebase';
+import { FirebaseProvider } from '../../providers/firebase/firebase';
 
 @Component({
   selector: 'page-list',
@@ -43,6 +43,7 @@ export class ListPage {
   numberOfItems : number = 0
 
   constructor(
+    public firebaseProvider: FirebaseProvider,
     public navCtrl: NavController,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
@@ -135,15 +136,12 @@ export class ListPage {
             isChecked: item.isChecked,
           }
 
-          firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
-            let toast = this.toastCtrl.create({
-              message: "Updated item!",
-              duration: 3000,
-            }).present();
-            this.loadItems()
-          }).catch((err) => {
-            console.log(err);
-          })
+          this.firebaseProvider.updateItemService(item, updatedItem)
+          this.loadItems()
+          let toast = this.toastCtrl.create({
+            message: "Updated item!",
+            duration: 3000,
+          }).present();
         }
       },
     ]
@@ -185,15 +183,12 @@ export class ListPage {
               isChecked: item.isChecked,
             }
 
-            firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
-              let toast = this.toastCtrl.create({
-                message: "Updated item!",
-                duration: 3000,
-              }).present();
-              this.loadItems()
-            }).catch((err) => {
-              console.log(err)
-            })
+            this.firebaseProvider.updateItemService(item, updatedItem)
+            this.loadItems()
+            let toast = this.toastCtrl.create({
+              message: "Updated item!",
+              duration: 3000,
+            }).present();
           }
         }
       ]
@@ -217,15 +212,12 @@ export class ListPage {
         {
           text: 'Continue',
           handler: () => {
-            firebase.firestore().collection("items").doc(item.id).delete().then((doc) => {
-              let toast = this.toastCtrl.create({
-                message: "Deleted " + item.name,
-                duration: 3000,
-              }).present();
-              this.loadItems()
-            }).catch((err) => {
-              console.log(err);
-            })
+            let toast = this.toastCtrl.create({
+              message: "Deleted " + item.name,
+              duration: 3000,
+            }).present();
+            this.loadItems()
+            this.firebaseProvider.deleteItemService(item)
           }
         }
       ]
@@ -246,7 +238,7 @@ export class ListPage {
 
     loading.present();
 
-    let list = firebase.firestore().collection("items")
+    let list = this.firebaseProvider.getItemsService()
 
     list.get()
       .then((docs) => {
@@ -268,21 +260,18 @@ export class ListPage {
     this.categorized_items[item.category].push(item)
   }
 
-  updateItem(item) {
-    firebase.firestore().collection("items").doc(item.id).update(item).then((doc) => {
-      let verb = "Removed "
-      if (item.isChecked) {
-        verb = "Added "
-      }
+  checkItem(item) {
+    let verb = "Removed "
+    if (item.isChecked) {
+      verb = "Added "
+    }
 
-      let toast = this.toastCtrl.create({
-        message: verb + item.name + "!",
-        duration: 3000,
-      }).present();
+    let toast = this.toastCtrl.create({
+      message: verb + item.name + "!",
+      duration: 3000,
+    }).present();
 
-    }).catch((err) => {
-      console.log(err);
-    })
+    this.firebaseProvider.checkItemService(item)
   }
 
   selectCategoryPrompt() {
@@ -343,19 +332,12 @@ export class ListPage {
       {
         text: 'Add',
         handler: data => {
-          firebase.firestore().collection("items").add({
-            name: data.name,
-            category: category,
-            isChecked: false,
-          }).then((doc) => {
-            let toast = this.toastCtrl.create({
-              message: "Added " + data.name + "!",
-              duration: 3000,
-            }).present();
-            this.loadItems()
-          }).catch((err) => {
-            console.log(err);
-          })
+          this.firebaseProvider.addItemService(data, category)
+          let toast = this.toastCtrl.create({
+            message: "Added " + data.name + "!",
+            duration: 3000,
+          }).present();
+          this.loadItems()
         }
       }
     ]
@@ -389,14 +371,13 @@ export class ListPage {
   }
 
   logout() {
-    firebase.auth().signOut().then(() => {
+    let toast = this.toastCtrl.create({
+      message: "Logged out",
+      duration: 3000,
+    }).present();
 
-      let toast = this.toastCtrl.create({
-        message: "Logged out",
-        duration: 3000,
-      }).present();
+    this.navCtrl.setRoot(LoginPage);
 
-      this.navCtrl.setRoot(LoginPage);
-    });
+    this.firebaseProvider.logoutService()
   }
 }

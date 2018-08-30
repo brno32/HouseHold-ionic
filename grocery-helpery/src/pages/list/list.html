@@ -19,7 +19,7 @@
         <ion-label>{{category}}</ion-label>
         <ion-item *ngFor="let item of categorized_items[category]" (press)="editItem(item)">
           <ion-label>{{item.name}}</ion-label>
-          <ion-checkbox [(ngModel)]="item.isChecked" (click)="updateItem(item)"></ion-checkbox>
+          <ion-checkbox [(ngModel)]="item.isChecked" (click)="checkItem(item)"></ion-checkbox>
         </ion-item>
       </div>
     </div>
