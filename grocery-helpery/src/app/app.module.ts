@@ -1,8 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
+import { Camera } from '@ionic-native/camera'
 
 import { MyApp } from './app.component';
 import { LoginPage } from '../pages/login/login';
@@ -11,6 +13,7 @@ import { FeedPage } from '../pages/feed/feed'
 import { ListPage } from '../pages/list/list';
 
 import firebase from 'firebase';
+import { FirebaseProvider } from '../providers/firebase/firebase';
 
 var config = {
     apiKey: "AIzaSyBIKDvdgxOBt2HL9wlzPVrDHONjbeOevgc",
@@ -36,6 +39,7 @@ firebase.firestore().settings({
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
@@ -49,7 +53,9 @@ firebase.firestore().settings({
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    FirebaseProvider,
+    Camera,
   ]
 })
 export class AppModule {}

@@ -3,7 +3,7 @@ import { NavController, LoadingController, ToastController, AlertController } fr
 import { LoginPage } from '../login/login';
 import { FeedPage } from '../feed/feed';
 
-import firebase from 'firebase';
+import { FirebaseProvider } from '../../providers/firebase/firebase';
 
 @Component({
   selector: 'page-list',
@@ -43,6 +43,7 @@ export class ListPage {
   numberOfItems : number = 0
 
   constructor(
+    public firebaseProvider: FirebaseProvider,
     public navCtrl: NavController,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
@@ -65,7 +66,7 @@ export class ListPage {
   }
 
   checkIfPopulated(category) {
-    let populatedCategories : string[] = Array.from(this.populatedCategories);
+    let populatedCategories : string[] = Array.from(this.populatedCategories)
     return populatedCategories.includes(category)
   }
 
@@ -76,7 +77,7 @@ export class ListPage {
       {
         text: 'Edit Item Name',
         handler: data => {
-          console.log('Edit Item Name clicked');
+          console.log('Edit Item Name clicked')
           this.editItemName(item)
         }
       },
@@ -96,13 +97,13 @@ export class ListPage {
         text: 'Cancel',
         role: 'cancel',
         handler: data => {
-          console.log('Cancel clicked');
+          console.log('Cancel clicked')
         }
       },
     ]
     })
 
-    editPrompt.present();
+    editPrompt.present()
   }
 
   editItemName(item) {
@@ -135,21 +136,19 @@ export class ListPage {
             isChecked: item.isChecked,
           }
 
-          firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
-            let toast = this.toastCtrl.create({
-              message: "Updated item!",
-              duration: 3000,
-            }).present();
-            this.loadItems()
-          }).catch((err) => {
-            console.log(err);
-          })
+          this.firebaseProvider.updateItemService(item, updatedItem)
+          this.loadItems()
+
+          let toast = this.toastCtrl.create({
+            message: "Updated item!",
+            duration: 3000,
+          }).present()
         }
       },
     ]
     })
 
-    editItemNamePrompt.present();
+    editItemNamePrompt.present()
   }
 
   editItemCategory(item) {
@@ -171,7 +170,7 @@ export class ListPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
+            console.log('Cancel clicked')
             this.editItem(item)
           }
         },
@@ -185,21 +184,18 @@ export class ListPage {
               isChecked: item.isChecked,
             }
 
-            firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
-              let toast = this.toastCtrl.create({
-                message: "Updated item!",
-                duration: 3000,
-              }).present();
-              this.loadItems()
-            }).catch((err) => {
-              console.log(err)
-            })
+            this.firebaseProvider.updateItemService(item, updatedItem)
+            this.loadItems()
+            let toast = this.toastCtrl.create({
+              message: "Updated item!",
+              duration: 3000,
+            }).present()
           }
         }
       ]
     })
 
-    categoryPrompt.present();
+    categoryPrompt.present()
   }
 
   deleteItem(item) {
@@ -210,27 +206,25 @@ export class ListPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+            console.log('Cancel clicked')
             this.editItem(item)
           }
         },
         {
           text: 'Continue',
           handler: () => {
-            firebase.firestore().collection("items").doc(item.id).delete().then((doc) => {
-              let toast = this.toastCtrl.create({
-                message: "Deleted " + item.name,
-                duration: 3000,
-              }).present();
-              this.loadItems()
-            }).catch((err) => {
-              console.log(err);
-            })
+            this.loadItems()
+            this.firebaseProvider.deleteItemService(item)
+
+            let toast = this.toastCtrl.create({
+              message: "Deleted " + item.name,
+              duration: 3000,
+            }).present();
           }
         }
       ]
-    });
-    alert.present();
+    })
+    alert.present()
   }
 
   loadItems() {
@@ -242,11 +236,11 @@ export class ListPage {
 
     let loading = this.loadingCtrl.create({
       content: "Loading grocery list..."
-    });
+    })
 
-    loading.present();
+    loading.present()
 
-    let list = firebase.firestore().collection("items")
+    let list = this.firebaseProvider.getItemsService()
 
     list.get()
       .then((docs) => {
@@ -257,10 +251,10 @@ export class ListPage {
           this.numberOfItems += 1
         })
       }).catch((err) => {
-        console.log(err);
+        console.log(err)
     })
 
-    loading.dismiss();
+    loading.dismiss()
   }
 
   sortItem(item) {
@@ -268,21 +262,18 @@ export class ListPage {
     this.categorized_items[item.category].push(item)
   }
 
-  updateItem(item) {
-    firebase.firestore().collection("items").doc(item.id).update(item).then((doc) => {
-      let verb = "Removed "
-      if (item.isChecked) {
-        verb = "Added "
-      }
+  checkItem(item) {
+    let verb = "Removed "
+    if (item.isChecked) {
+      verb = "Added "
+    }
 
-      let toast = this.toastCtrl.create({
-        message: verb + item.name + "!",
-        duration: 3000,
-      }).present();
+    this.firebaseProvider.checkItemService(item)
 
-    }).catch((err) => {
-      console.log(err);
-    })
+    let toast = this.toastCtrl.create({
+      message: verb + item.name + "!",
+      duration: 3000,
+    }).present();
   }
 
   selectCategoryPrompt() {
@@ -304,7 +295,7 @@ export class ListPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
+            console.log('Cancel clicked')
           }
         },
         {
@@ -337,31 +328,25 @@ export class ListPage {
         text: 'Cancel',
         role: 'cancel',
         handler: data => {
-          console.log('Cancel clicked');
+          console.log('Cancel clicked')
         }
       },
       {
         text: 'Add',
         handler: data => {
-          firebase.firestore().collection("items").add({
-            name: data.name,
-            category: category,
-            isChecked: false,
-          }).then((doc) => {
-            let toast = this.toastCtrl.create({
-              message: "Added " + data.name + "!",
-              duration: 3000,
-            }).present();
-            this.loadItems()
-          }).catch((err) => {
-            console.log(err);
-          })
+          this.firebaseProvider.addItemService(data, category)
+          this.loadItems()
+
+          let toast = this.toastCtrl.create({
+            message: "Added " + data.name + "!",
+            duration: 3000,
+          }).present()
         }
       }
     ]
     })
 
-    itemPrompt.present();
+    itemPrompt.present()
   }
 
   checkout() {
@@ -373,30 +358,28 @@ export class ListPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+            console.log('Cancel clicked')
           }
         },
         {
           text: 'Continue',
           handler: () => {
-            console.log('Checkout clicked');
+            console.log('Checkout clicked')
           }
         }
       ]
     })
 
-    checkoutPrompt.present();
+    checkoutPrompt.present()
   }
 
   logout() {
-    firebase.auth().signOut().then(() => {
+    this.firebaseProvider.logoutService()
+    this.navCtrl.setRoot(LoginPage)
 
-      let toast = this.toastCtrl.create({
-        message: "Logged out",
-        duration: 3000,
-      }).present();
-
-      this.navCtrl.setRoot(LoginPage);
-    });
+    let toast = this.toastCtrl.create({
+      message: "Logged out",
+      duration: 3000,
+    }).present()
   }
 }
