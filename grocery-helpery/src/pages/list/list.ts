@@ -66,7 +66,7 @@ export class ListPage {
   }
 
   checkIfPopulated(category) {
-    let populatedCategories : string[] = Array.from(this.populatedCategories);
+    let populatedCategories : string[] = Array.from(this.populatedCategories)
     return populatedCategories.includes(category)
   }
 
@@ -77,7 +77,7 @@ export class ListPage {
       {
         text: 'Edit Item Name',
         handler: data => {
-          console.log('Edit Item Name clicked');
+          console.log('Edit Item Name clicked')
           this.editItemName(item)
         }
       },
@@ -97,13 +97,13 @@ export class ListPage {
         text: 'Cancel',
         role: 'cancel',
         handler: data => {
-          console.log('Cancel clicked');
+          console.log('Cancel clicked')
         }
       },
     ]
     })
 
-    editPrompt.present();
+    editPrompt.present()
   }
 
   editItemName(item) {
@@ -138,16 +138,17 @@ export class ListPage {
 
           this.firebaseProvider.updateItemService(item, updatedItem)
           this.loadItems()
+
           let toast = this.toastCtrl.create({
             message: "Updated item!",
             duration: 3000,
-          }).present();
+          }).present()
         }
       },
     ]
     })
 
-    editItemNamePrompt.present();
+    editItemNamePrompt.present()
   }
 
   editItemCategory(item) {
@@ -188,13 +189,13 @@ export class ListPage {
             let toast = this.toastCtrl.create({
               message: "Updated item!",
               duration: 3000,
-            }).present();
+            }).present()
           }
         }
       ]
     })
 
-    categoryPrompt.present();
+    categoryPrompt.present()
   }
 
   deleteItem(item) {
@@ -212,17 +213,18 @@ export class ListPage {
         {
           text: 'Continue',
           handler: () => {
+            this.loadItems()
+            this.firebaseProvider.deleteItemService(item)
+
             let toast = this.toastCtrl.create({
               message: "Deleted " + item.name,
               duration: 3000,
             }).present();
-            this.loadItems()
-            this.firebaseProvider.deleteItemService(item)
           }
         }
       ]
-    });
-    alert.present();
+    })
+    alert.present()
   }
 
   loadItems() {
@@ -234,9 +236,9 @@ export class ListPage {
 
     let loading = this.loadingCtrl.create({
       content: "Loading grocery list..."
-    });
+    })
 
-    loading.present();
+    loading.present()
 
     let list = this.firebaseProvider.getItemsService()
 
@@ -249,10 +251,10 @@ export class ListPage {
           this.numberOfItems += 1
         })
       }).catch((err) => {
-        console.log(err);
+        console.log(err)
     })
 
-    loading.dismiss();
+    loading.dismiss()
   }
 
   sortItem(item) {
@@ -266,12 +268,12 @@ export class ListPage {
       verb = "Added "
     }
 
+    this.firebaseProvider.checkItemService(item)
+
     let toast = this.toastCtrl.create({
       message: verb + item.name + "!",
       duration: 3000,
     }).present();
-
-    this.firebaseProvider.checkItemService(item)
   }
 
   selectCategoryPrompt() {
@@ -293,7 +295,7 @@ export class ListPage {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
+            console.log('Cancel clicked')
           }
         },
         {
@@ -333,17 +335,18 @@ export class ListPage {
         text: 'Add',
         handler: data => {
           this.firebaseProvider.addItemService(data, category)
+          this.loadItems()
+
           let toast = this.toastCtrl.create({
             message: "Added " + data.name + "!",
             duration: 3000,
-          }).present();
-          this.loadItems()
+          }).present()
         }
       }
     ]
     })
 
-    itemPrompt.present();
+    itemPrompt.present()
   }
 
   checkout() {
@@ -355,13 +358,13 @@ export class ListPage {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+            console.log('Cancel clicked')
           }
         },
         {
           text: 'Continue',
           handler: () => {
-            console.log('Checkout clicked');
+            console.log('Checkout clicked')
           }
         }
       ]
@@ -371,13 +374,12 @@ export class ListPage {
   }
 
   logout() {
+    this.firebaseProvider.logoutService()
+    this.navCtrl.setRoot(LoginPage)
+
     let toast = this.toastCtrl.create({
       message: "Logged out",
       duration: 3000,
-    }).present();
-
-    this.navCtrl.setRoot(LoginPage);
-
-    this.firebaseProvider.logoutService()
+    }).present()
   }
 }

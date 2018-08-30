@@ -54,7 +54,7 @@ export class FirebaseProvider {
 
   logoutService() {
     firebase.auth().signOut().then(() => {
-
+      // TODO: trigger signal for success toast
     });
   }
 
