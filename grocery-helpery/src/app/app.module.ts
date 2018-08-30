@@ -11,6 +11,7 @@ import { FeedPage } from '../pages/feed/feed'
 import { ListPage } from '../pages/list/list';
 
 import firebase from 'firebase';
+import { FirebaseProvider } from '../providers/firebase/firebase';
 
 var config = {
     apiKey: "AIzaSyBIKDvdgxOBt2HL9wlzPVrDHONjbeOevgc",
@@ -49,7 +50,8 @@ firebase.firestore().settings({
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    FirebaseProvider
   ]
 })
 export class AppModule {}
