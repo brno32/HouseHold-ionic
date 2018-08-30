@@ -1,8 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { Http } from '@angular/http';
-
 import firebase from 'firebase';
 
 @Injectable()
@@ -13,6 +11,7 @@ export class FirebaseProvider {
   }
 
   getItemsService() {
+    console.log("Items loaded");
     return firebase.firestore().collection("items")
   }
 
@@ -22,7 +21,7 @@ export class FirebaseProvider {
       category: category,
       isChecked: false,
     }).then((doc) => {
-      // TODO: trigger signal for success toast
+      console.log(item.name + " added");
     }).catch((err) => {
       console.log(err);
     })
@@ -30,7 +29,7 @@ export class FirebaseProvider {
 
   updateItemService(item, updatedItem) {
     firebase.firestore().collection("items").doc(item.id).update(updatedItem).then((doc) => {
-      // TODO: trigger signal for success toast
+      console.log(item.name + " updated");
     }).catch((err) => {
       console.log(err);
     })
@@ -38,7 +37,7 @@ export class FirebaseProvider {
 
   deleteItemService(item) {
     firebase.firestore().collection("items").doc(item.id).delete().then((doc) => {
-      // TODO: trigger signal for success toast
+      console.log(item.name + " deleted");
     }).catch((err) => {
       console.log(err);
     })
@@ -46,7 +45,7 @@ export class FirebaseProvider {
 
   checkItemService(item) {
     firebase.firestore().collection("items").doc(item.id).update(item).then((doc) => {
-      // TODO: trigger signal for success toast
+      console.log(item.name + " checked");
     }).catch((err) => {
       console.log(err);
     })
@@ -54,7 +53,7 @@ export class FirebaseProvider {
 
   logoutService() {
     firebase.auth().signOut().then(() => {
-      // TODO: trigger signal for success toast
+      console.log("Signed out");
     });
   }
 
