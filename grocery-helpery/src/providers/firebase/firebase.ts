@@ -10,9 +10,29 @@ export class FirebaseProvider {
     console.log('Hello FirebaseProvider Provider');
   }
 
+
+
+  getLogsService() {
+    console.log("Logs loaded");
+    return firebase.firestore().collection("logs")
+  }
+
   getItemsService() {
     console.log("Items loaded");
     return firebase.firestore().collection("items")
+  }
+
+  addLogService(log) {
+    firebase.firestore().collection("logs").add({
+      text: log.text,
+      created: firebase.firestore.FieldValue.serverTimestamp(),
+      owner: firebase.auth().currentUser.uid,
+      owner_name: firebase.auth().currentUser.displayName,
+    }).then((doc) => {
+      
+    }).catch((err) => {
+      console.log(err);
+    })
   }
 
   addItemService(data, category) {
