@@ -83,7 +83,7 @@ export class FeedPage {
 
     const log = {text: "This is a log"}
 
-    this.firebaseProvider().addLogService(log)
+    this.firebaseProvider.addLogService(log)
 
     let toast = this.toastCtrl.create({
       message: "Message successfully sent",
