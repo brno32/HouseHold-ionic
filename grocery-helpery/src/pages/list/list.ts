@@ -70,6 +70,12 @@ export class ListPage {
     this.categorized_items[item.category].push(item)
   }
 
+  checkIfCategoryEmpty(category) {
+    if (this.categorized_items[category].length == 0){
+      this.populatedCategories.delete(category)
+    }
+  }
+
   checkIfPopulated(category) {
     let populatedCategories : string[] = Array.from(this.populatedCategories)
     return populatedCategories.includes(category)
@@ -146,8 +152,6 @@ export class ListPage {
           this.categorized_items[item.category].splice(index, 1)
           this.sortItem(updatedItem)
 
-          // TODO: check if category now empty, and, if so, delete it as well
-
           let toast = this.toastCtrl.create({
             message: "Updated item!",
             duration: 3000,
@@ -196,8 +200,7 @@ export class ListPage {
             this.firebaseProvider.updateItemService(item, updatedItem)
             this.categorized_items[item.category].splice(index, 1)
             this.sortItem(updatedItem)
-
-            // TODO: check if category now empty, and, if so, delete it as well
+            this.checkIfCategoryEmpty(item.category)
 
             let toast = this.toastCtrl.create({
               message: "Updated item!",
@@ -228,9 +231,8 @@ export class ListPage {
           handler: () => {
             this.categorized_items[item.category].splice(index, 1)
 
-            // TODO: check if category now empty, and, if so, delete it as well
-
             this.firebaseProvider.deleteItemService(item)
+            this.checkIfCategoryEmpty(item.category)
 
             let toast = this.toastCtrl.create({
               message: "Deleted " + item.name,
