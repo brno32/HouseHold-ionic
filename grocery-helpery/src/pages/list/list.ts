@@ -69,10 +69,10 @@ export class ListPage {
     this.populatedCategories.add(item.category)
 
     if (item.isChecked) {
-      let index = 0
+      var index = 0
       for (let i in this.categorized_items[item.category]) {
         if (this.categorized_items[item.category][i].isChecked) {
-          index = i; break
+          index = Number(i); break
         }
       }
 
@@ -236,7 +236,7 @@ export class ListPage {
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked')
-            this.editItem(item)
+            this.editItem(item, index)
           }
         },
         {
@@ -296,7 +296,7 @@ export class ListPage {
 
     this.firebaseProvider.checkItemService(item)
     this.categorized_items[item.category].splice(index, 1)
-    this.sortItem(item, index)
+    this.sortItem(item)
 
     let toast = this.toastCtrl.create({
       message: verb + item.name + "!",
