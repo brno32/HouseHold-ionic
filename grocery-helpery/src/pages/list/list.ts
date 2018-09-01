@@ -67,7 +67,20 @@ export class ListPage {
 
   sortItem(item) {
     this.populatedCategories.add(item.category)
-    this.categorized_items[item.category].push(item)
+
+    if (item.isChecked) {
+      let index = 0
+      for (let i in this.categorized_items[item.category]) {
+        if (this.categorized_items[item.category][i].isChecked) {
+          index = i; break
+        }
+      }
+
+      this.categorized_items[item.category].splice(index, 0, item)
+    }
+    else {
+      this.categorized_items[item.category].unshift(item);
+    }
   }
 
   checkIfCategoryEmpty(category) {
@@ -134,7 +147,7 @@ export class ListPage {
         role: 'cancel',
         handler: data => {
           console.log('Cancel clicked')
-          this.editItem(item)
+          this.editItem(item, index)
         }
       },
       {
@@ -184,7 +197,7 @@ export class ListPage {
           role: 'cancel',
           handler: data => {
             console.log('Cancel clicked')
-            this.editItem(item)
+            this.editItem(item, index)
           }
         },
         {
@@ -275,13 +288,15 @@ export class ListPage {
     loading.dismiss()
   }
 
-  checkItem(item) {
+  checkItem(item, index) {
     let verb = "Removed "
     if (item.isChecked) {
       verb = "Added "
     }
 
     this.firebaseProvider.checkItemService(item)
+    this.categorized_items[item.category].splice(index, 1)
+    this.sortItem(item, index)
 
     let toast = this.toastCtrl.create({
       message: verb + item.name + "!",
