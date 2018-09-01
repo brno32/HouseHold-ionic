@@ -65,32 +65,38 @@ export class ListPage {
     event.complete()
   }
 
+  sortItem(item) {
+    this.populatedCategories.add(item.category)
+    this.categorized_items[item.category].push(item)
+  }
+
   checkIfPopulated(category) {
     let populatedCategories : string[] = Array.from(this.populatedCategories)
     return populatedCategories.includes(category)
   }
 
-  editItem(item) {
+  editItem(item, index) {
     let editPrompt = this.alertCtrl.create({
     title: item.name + ' in ' + item.category,
+    enableBackdropDismiss: false,
     buttons: [
       {
         text: 'Edit Item Name',
         handler: data => {
           console.log('Edit Item Name clicked')
-          this.editItemName(item)
+          this.editItemName(item, index)
         }
       },
       {
         text: 'Edit Item Category',
         handler: data => {
-          this.editItemCategory(item)
+          this.editItemCategory(item, index)
         }
       },
       {
         text: 'Delete Item',
         handler: data => {
-          this.deleteItem(item)
+          this.deleteItem(item, index)
         }
       },
       {
@@ -106,7 +112,7 @@ export class ListPage {
     editPrompt.present()
   }
 
-  editItemName(item) {
+  editItemName(item, index) {
     let editItemNamePrompt = this.alertCtrl.create({
     title: 'Editing: ' + item.name + ' in ' + item.category,
     inputs: [
@@ -137,7 +143,10 @@ export class ListPage {
           }
 
           this.firebaseProvider.updateItemService(item, updatedItem)
-          this.loadItems()
+          this.categorized_items[item.category].splice(index, 1)
+          this.sortItem(updatedItem)
+
+          // TODO: check if category now empty, and, if so, delete it as well
 
           let toast = this.toastCtrl.create({
             message: "Updated item!",
@@ -151,7 +160,7 @@ export class ListPage {
     editItemNamePrompt.present()
   }
 
-  editItemCategory(item) {
+  editItemCategory(item, index) {
     let radioButtons = []
     for (let category of this.categories) {
       let category_obj = {
@@ -185,7 +194,11 @@ export class ListPage {
             }
 
             this.firebaseProvider.updateItemService(item, updatedItem)
-            this.loadItems()
+            this.categorized_items[item.category].splice(index, 1)
+            this.sortItem(updatedItem)
+
+            // TODO: check if category now empty, and, if so, delete it as well
+
             let toast = this.toastCtrl.create({
               message: "Updated item!",
               duration: 3000,
@@ -198,7 +211,7 @@ export class ListPage {
     categoryPrompt.present()
   }
 
-  deleteItem(item) {
+  deleteItem(item, index) {
     let alert = this.alertCtrl.create({
       message: 'Delete ' + item.name + '?',
       buttons: [
@@ -213,7 +226,10 @@ export class ListPage {
         {
           text: 'Continue',
           handler: () => {
-            this.loadItems()
+            this.categorized_items[item.category].splice(index, 1)
+
+            // TODO: check if category now empty, and, if so, delete it as well
+
             this.firebaseProvider.deleteItemService(item)
 
             let toast = this.toastCtrl.create({
@@ -255,11 +271,6 @@ export class ListPage {
     })
 
     loading.dismiss()
-  }
-
-  sortItem(item) {
-    this.populatedCategories.add(item.category)
-    this.categorized_items[item.category].push(item)
   }
 
   checkItem(item) {
