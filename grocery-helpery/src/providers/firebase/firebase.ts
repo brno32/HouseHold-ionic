@@ -39,7 +39,7 @@ export class FirebaseProvider {
       category: category,
       isChecked: false,
     }).then((doc) => {
-      console.log(item.name + " added");
+      console.log(data.name + " added");
     }).catch((err) => {
       console.log(err)
     })
