@@ -27,6 +27,14 @@
       <ion-input type="password" placeholder="password" [(ngModel)]="password"></ion-input>
     </ion-row>
     <ion-row>
+      <button ion-button block round outline color="light" (click)="addPhoto()">Add Profile Picture</button>
+    </ion-row>
+    <ion-row class="rowStyleNoPadding" *ngIf="image">
+      <ion-card class="round-corners">
+        <img [src]="image" class="round-corners" margin>
+      </ion-card>
+    </ion-row>
+    <ion-row>
       <button ion-button block round outline color="light" (click)="signUp()">Sign Up</button>
     </ion-row>
   </ion-grid>

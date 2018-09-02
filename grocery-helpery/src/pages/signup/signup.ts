@@ -17,6 +17,9 @@ export class SignupPage {
   email: string = ''
   password: string = ''
 
+  image: string
+  imageURL : string
+
   constructor(
     public camera: Camera,
     public navCtrl: NavController,
@@ -31,7 +34,7 @@ export class SignupPage {
         let newUser: firebase.User = data.user
         newUser.updateProfile({
           displayName: this.name,
-          photoURL: "",
+          photoURL: this.imageURL,
         }).then(() => {
           console.log("Updated")
 
@@ -62,6 +65,56 @@ export class SignupPage {
 
   goBack() {
     this.navCtrl.pop()
+  }
+
+  addPhoto() {
+    this.launchCamera()
+  }
+
+  launchCamera() {
+    let options : CameraOptions = {
+      quality: 90,
+      sourceType: this.camera.PictureSourceType.CAMERA,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.PNG,
+      mediaType: this.camera.MediaType.PICTURE,
+      correctOrientation: true,
+      targetHeight: 512,
+      targetWidth: 512,
+      allowEdit: true,
+    }
+
+    this.camera.getPicture(options).then((base64Image) => {
+      console.log(base64Image)
+
+      this.image = "data:image/png;base64," + base64Image
+
+      var userID = firebase.auth().currentUser.uid
+      this.upload(userID)
+
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+
+  upload(name: string) {
+    let ref = firebase.storage().ref("userImages/" + name)
+
+    let uploadTask = ref.putString(this.image.split(",")[1], "base64")
+
+    uploadTask.on("state_changed", (taskSnapshot) => {
+      console.log(taskSnapshot)
+    }, (error) => {
+      console.log(error)
+    }, () => {
+      console.log("Upload Complete!")
+
+      uploadTask.snapshot.ref.getDownloadURL().then((url) => {
+        console.log(url)
+        this.imageURL = url
+      })
+
+    })
   }
 
 }
