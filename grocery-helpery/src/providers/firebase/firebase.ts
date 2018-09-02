@@ -20,12 +20,23 @@ export class FirebaseProvider {
     return firebase.firestore().collection("items")
   }
 
-  addLogService(log) {
+  addLogService(item) {
+    let imageURL = ""
+    let ref = firebase.storage().ref("userImages/" + firebase.auth().currentUser.uid)
+    ref.getDownloadURL().then((url) => {
+      console.log(url)
+      imageURL = url
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
     firebase.firestore().collection("logs").add({
-      text: log.text,
+      item: item.name,
       created: firebase.firestore.FieldValue.serverTimestamp(),
       owner: firebase.auth().currentUser.uid,
-      owner_name: firebase.auth().currentUser.displayName,
+      ownerName: firebase.auth().currentUser.displayName,
+      ownerImageURL: firebase.auth().currentUser.photoURL,
     }).then((doc) => {
 
     }).catch((err) => {

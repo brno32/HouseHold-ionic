@@ -1,7 +1,10 @@
 <ion-header>
   <ion-navbar color="primary">
-    <ion-title>Your HouseHold</ion-title>
+    <!-- <ion-title>Your HouseHold</ion-title> -->
     <ion-buttons end>
+      <button ion-button icon-only clear color="light" (click)="logout()">
+        <ion-icon name="exit"></ion-icon>
+      </button>
       <button ion-button icon-only clear color="light" (click)="goToList()">
         <ion-icon name="list-box"></ion-icon>
       </button>
@@ -15,11 +18,11 @@
   </ion-refresher>
 
   <ion-list no-lines (swipeleft)="goToList()">
-    <ion-item *ngFor="let item of [1,2,3,4,5,6,7,8,9,10]">
+    <ion-item *ngFor="let log of logs">
       <ion-avatar item-start>
-        <img src="../../assets/icon/favicon.ico">
+        <img src="{{ log.ownerImageURL }}">
       </ion-avatar>
-      <p text-wrap class="logStyle">Person bought apples</p>
+      <p text-wrap class="logStyle">{{ log.ownerName }} bought {{ log.item }}</p>
     </ion-item>
   </ion-list>
 

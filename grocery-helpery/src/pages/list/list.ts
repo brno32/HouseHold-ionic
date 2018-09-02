@@ -295,6 +295,7 @@ export class ListPage {
     }
 
     this.firebaseProvider.checkItemService(item)
+    this.firebaseProvider.addLogService(item)
     this.categorized_items[item.category].splice(index, 1)
     this.sortItem(item)
 

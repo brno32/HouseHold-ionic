@@ -17,7 +17,7 @@ export class FeedPage {
   text: string = ""
   logs: any[] = []
   pageSize: number = 10
-  cursor: any
+  //cursor: any
   infiniteEvent: any
 
   constructor(
@@ -26,6 +26,7 @@ export class FeedPage {
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
   ) {
+    this.getLogs()
   }
 
   ionViewDidLoad() {
@@ -51,12 +52,13 @@ export class FeedPage {
       .then((docs) => {
 
         docs.forEach((doc) => {
-          this.logs.push(doc)
+          this.logs.push(doc.data())
+          console.log(doc)
         })
 
         loading.dismiss();
 
-        this.cursor = this.logs[this.logs.length - 1]
+        //this.cursor = this.logs[this.logs.length - 1]
 
         console.log(this.logs)
 
@@ -79,19 +81,6 @@ export class FeedPage {
     event.complete()
   }
 
-  log() {
-
-    const log = {text: "This is a log"}
-
-    this.firebaseProvider.addLogService(log)
-
-    let toast = this.toastCtrl.create({
-      message: "Message successfully sent",
-      duration: 3000,
-    }).present()
-    this.getLogs()
-  }
-
   ago(time) {
     let difference = moment(time).diff(moment())
     return moment.duration(difference).humanize()
@@ -99,6 +88,7 @@ export class FeedPage {
 
   logout() {
     this.firebaseProvider.logoutService()
+    this.navCtrl.setRoot(LoginPage)
   }
 
 }

@@ -37,7 +37,8 @@ export class SignupPage {
           photoURL: this.imageURL,
         }).then(() => {
           console.log("Updated")
-
+          var userID = firebase.auth().currentUser.uid
+          this.upload(userID)
           this.alertCtrl.create({
             title: "Account Created",
             message: "Your account has been created successfully",
@@ -85,12 +86,7 @@ export class SignupPage {
     }
 
     this.camera.getPicture(options).then((base64Image) => {
-      console.log(base64Image)
-
       this.image = "data:image/png;base64," + base64Image
-
-      var userID = firebase.auth().currentUser.uid
-      this.upload(userID)
 
     }).catch((err) => {
       console.log(err)
