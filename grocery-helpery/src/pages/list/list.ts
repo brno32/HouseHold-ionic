@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
-import { FeedPage } from '../feed/feed';
 
 import { FirebaseProvider } from '../../providers/firebase/firebase';
 
@@ -50,10 +49,6 @@ export class ListPage {
     private alertCtrl: AlertController,
   ) {
     this.loadItems()
-  }
-
-  goToFeed() {
-    this.navCtrl.setRoot(FeedPage)
   }
 
   refresh(event) {

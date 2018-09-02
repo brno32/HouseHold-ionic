@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar color="primary">
     <ion-buttons>
-      <button ion-button icon-only clear color="light" (click)="goToFeed()"><ion-icon name="home"></ion-icon></button>
+      <button ion-button icon-only clear color="light"><ion-icon name="home"></ion-icon></button>
       <button ion-button icon-only clear color="light" (click)="selectCategoryPrompt()" style="float: right;"><ion-icon name="add"></ion-icon></button>
       <button ion-button icon-only clear color="light" (click)="checkout()" style="float: right;" padding-right><ion-icon name="cart"></ion-icon></button>
     </ion-buttons>
@@ -13,7 +13,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-list (swiperight)="goToFeed()">
+  <ion-list>
     <div *ngFor="let category of categories">
       <div *ngIf="checkIfPopulated(category)">
         <ion-label>{{category}}</ion-label>

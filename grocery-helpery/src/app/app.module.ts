@@ -8,8 +8,7 @@ import { Camera } from '@ionic-native/camera'
 
 import { MyApp } from './app.component';
 import { LoginPage } from '../pages/login/login';
-import { SignupPage } from '../pages/signup/signup'
-import { FeedPage } from '../pages/feed/feed'
+import { SignupPage } from '../pages/signup/signup';
 import { ListPage } from '../pages/list/list';
 
 import firebase from 'firebase';
@@ -34,7 +33,6 @@ firebase.firestore().settings({
     MyApp,
     LoginPage,
     SignupPage,
-    FeedPage,
     ListPage,
   ],
   imports: [
@@ -47,7 +45,6 @@ firebase.firestore().settings({
     MyApp,
     LoginPage,
     SignupPage,
-    FeedPage,
     ListPage,
   ],
   providers: [
