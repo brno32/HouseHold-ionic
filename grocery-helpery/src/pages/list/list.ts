@@ -65,32 +65,57 @@ export class ListPage {
     event.complete()
   }
 
+  sortItem(item) {
+    this.populatedCategories.add(item.category)
+
+    if (item.isChecked) {
+      var index = 0
+      for (let i in this.categorized_items[item.category]) {
+        if (this.categorized_items[item.category][i].isChecked) {
+          index = Number(i); break
+        }
+      }
+
+      this.categorized_items[item.category].splice(index, 0, item)
+    }
+    else {
+      this.categorized_items[item.category].unshift(item);
+    }
+  }
+
+  checkIfCategoryEmpty(category) {
+    if (this.categorized_items[category].length == 0){
+      this.populatedCategories.delete(category)
+    }
+  }
+
   checkIfPopulated(category) {
     let populatedCategories : string[] = Array.from(this.populatedCategories)
     return populatedCategories.includes(category)
   }
 
-  editItem(item) {
+  editItem(item, index) {
     let editPrompt = this.alertCtrl.create({
     title: item.name + ' in ' + item.category,
+    enableBackdropDismiss: false,
     buttons: [
       {
         text: 'Edit Item Name',
         handler: data => {
           console.log('Edit Item Name clicked')
-          this.editItemName(item)
+          this.editItemName(item, index)
         }
       },
       {
         text: 'Edit Item Category',
         handler: data => {
-          this.editItemCategory(item)
+          this.editItemCategory(item, index)
         }
       },
       {
         text: 'Delete Item',
         handler: data => {
-          this.deleteItem(item)
+          this.deleteItem(item, index)
         }
       },
       {
@@ -106,7 +131,7 @@ export class ListPage {
     editPrompt.present()
   }
 
-  editItemName(item) {
+  editItemName(item, index) {
     let editItemNamePrompt = this.alertCtrl.create({
     title: 'Editing: ' + item.name + ' in ' + item.category,
     inputs: [
@@ -122,7 +147,7 @@ export class ListPage {
         role: 'cancel',
         handler: data => {
           console.log('Cancel clicked')
-          this.editItem(item)
+          this.editItem(item, index)
         }
       },
       {
@@ -137,7 +162,8 @@ export class ListPage {
           }
 
           this.firebaseProvider.updateItemService(item, updatedItem)
-          this.loadItems()
+          this.categorized_items[item.category].splice(index, 1)
+          this.sortItem(updatedItem)
 
           let toast = this.toastCtrl.create({
             message: "Updated item!",
@@ -151,7 +177,7 @@ export class ListPage {
     editItemNamePrompt.present()
   }
 
-  editItemCategory(item) {
+  editItemCategory(item, index) {
     let radioButtons = []
     for (let category of this.categories) {
       let category_obj = {
@@ -171,7 +197,7 @@ export class ListPage {
           role: 'cancel',
           handler: data => {
             console.log('Cancel clicked')
-            this.editItem(item)
+            this.editItem(item, index)
           }
         },
         {
@@ -185,7 +211,10 @@ export class ListPage {
             }
 
             this.firebaseProvider.updateItemService(item, updatedItem)
-            this.loadItems()
+            this.categorized_items[item.category].splice(index, 1)
+            this.sortItem(updatedItem)
+            this.checkIfCategoryEmpty(item.category)
+
             let toast = this.toastCtrl.create({
               message: "Updated item!",
               duration: 3000,
@@ -198,7 +227,7 @@ export class ListPage {
     categoryPrompt.present()
   }
 
-  deleteItem(item) {
+  deleteItem(item, index) {
     let alert = this.alertCtrl.create({
       message: 'Delete ' + item.name + '?',
       buttons: [
@@ -207,14 +236,16 @@ export class ListPage {
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked')
-            this.editItem(item)
+            this.editItem(item, index)
           }
         },
         {
           text: 'Continue',
           handler: () => {
-            this.loadItems()
+            this.categorized_items[item.category].splice(index, 1)
+
             this.firebaseProvider.deleteItemService(item)
+            this.checkIfCategoryEmpty(item.category)
 
             let toast = this.toastCtrl.create({
               message: "Deleted " + item.name,
@@ -257,18 +288,15 @@ export class ListPage {
     loading.dismiss()
   }
 
-  sortItem(item) {
-    this.populatedCategories.add(item.category)
-    this.categorized_items[item.category].push(item)
-  }
-
-  checkItem(item) {
+  checkItem(item, index) {
     let verb = "Removed "
     if (item.isChecked) {
       verb = "Added "
     }
 
     this.firebaseProvider.checkItemService(item)
+    this.categorized_items[item.category].splice(index, 1)
+    this.sortItem(item)
 
     let toast = this.toastCtrl.create({
       message: verb + item.name + "!",

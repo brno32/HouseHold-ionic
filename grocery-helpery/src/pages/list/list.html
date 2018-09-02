@@ -17,9 +17,9 @@
     <div *ngFor="let category of categories">
       <div *ngIf="checkIfPopulated(category)">
         <ion-label>{{category}}</ion-label>
-        <ion-item *ngFor="let item of categorized_items[category]" (press)="editItem(item)">
+        <ion-item *ngFor="let item of categorized_items[category]; let i = index" (press)="editItem(item, i)">
           <ion-label>{{item.name}}</ion-label>
-          <ion-checkbox [(ngModel)]="item.isChecked" (click)="checkItem(item)"></ion-checkbox>
+          <ion-checkbox [(ngModel)]="item.isChecked" (click)="checkItem(item, i)"></ion-checkbox>
         </ion-item>
       </div>
     </div>
