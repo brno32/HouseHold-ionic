@@ -41,6 +41,8 @@ export class ListPage {
 
   numberOfItems : number = 0
 
+  groupID : string = ""
+
   constructor(
     public firebaseProvider: FirebaseProvider,
     public navCtrl: NavController,
@@ -87,6 +89,187 @@ export class ListPage {
   checkIfPopulated(category) {
     let populatedCategories : string[] = Array.from(this.populatedCategories)
     return populatedCategories.includes(category)
+  }
+
+  loadItems() {
+    this.numberOfItems = 0
+    this.populatedCategories = new Set([])
+    for (let category of this.categories) {
+      this.categorized_items[category] = []
+    }
+
+    let loading = this.loadingCtrl.create({
+      content: "Loading grocery list..."
+    })
+
+    loading.present()
+
+    let list = this.firebaseProvider.getItemsService(this.groupID)
+
+    if (this.groupID == "") {
+      this.joinGroupPrompt()
+    }
+
+    list.get()
+      .then((docs) => {
+        docs.forEach((doc) => {
+          let item = doc.data()
+          item['id'] = doc.id
+          this.sortItem(item)
+          this.numberOfItems += 1
+        })
+      }).catch((err) => {
+        console.log(err)
+    })
+
+    loading.dismiss()
+  }
+
+  checkItem(item, index) {
+    let verb = "Removed "
+    if (item.isChecked) {
+      verb = "Added "
+    }
+
+    this.firebaseProvider.checkItemService(item)
+    this.categorized_items[item.category].splice(index, 1)
+    this.sortItem(item)
+
+    let toast = this.toastCtrl.create({
+      message: verb + item.name + "!",
+      duration: 3000,
+    }).present();
+  }
+
+  joinGroupPrompt() {
+    let joinGroupPrompt = this.alertCtrl.create({
+    title: 'Find Your HouseHold',
+    inputs: [
+      {
+        name: 'groupName',
+        placeholder: 'Your HouseHold',
+        // value: item.name,
+      },
+      {
+        password: 'groupPassword',
+        type: 'password',
+        placeholder: 'HouseHold Password',
+      },
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked')
+        }
+      },
+      {
+        text: 'Create HouseHold',
+        handler: data => {
+          console.log('Create HouseHold clicked')
+          this.createGroupPrompt()
+        }
+      },
+      {
+        text: 'Join',
+        handler: data => {
+
+          // TODO: firebase stuff
+
+          let toast = this.toastCtrl.create({
+            message: "Joined " + data.groupName + "!",
+            duration: 3000,
+          }).present()
+        }
+      },
+    ]
+    })
+
+    joinGroupPrompt.present()
+  }
+
+  createGroupPrompt() {
+    let createGroupPrompt = this.alertCtrl.create({
+    title: 'Find Your HouseHold',
+    inputs: [
+      {
+        name: 'groupName',
+        placeholder: 'Your HouseHold',
+      },
+      {
+        name: 'groupPassword',
+        type: 'password',
+        placeholder: 'HouseHold Password',
+      },
+      {
+        name: 'groupPassword2',
+        type: 'password',
+        placeholder: 'Confirm Password',
+      },
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked')
+        }
+      },
+      {
+        text: 'Join',
+        handler: data => {
+
+          // TODO: firebase stuff
+
+          let toast = this.toastCtrl.create({
+            message: "Created " + data.groupName + "!",
+            duration: 3000,
+          }).present()
+        }
+      },
+    ]
+    })
+
+    createGroupPrompt.present()
+  }
+
+  selectCategoryPrompt() {
+    let radioButtons = []
+    for (let category of this.categories) {
+      let category_obj = {
+        type: 'radio',
+        value: category,
+        label: category,
+      }
+      radioButtons.push(category_obj)
+    }
+
+    let categoryPrompt = this.alertCtrl.create({
+      title: 'Which Category?',
+      inputs: radioButtons,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked')
+          }
+        },
+        {
+          text: 'Continue',
+          handler: data => {
+            this.addItemPrompt(data)
+          }
+        }
+      ]
+    })
+
+    createGroupPrompt.present();
+  }
+
+  selectCategory(category) {
+    this.addItemPrompt(category)
   }
 
   editItem(item, index) {
@@ -251,90 +434,6 @@ export class ListPage {
       ]
     })
     alert.present()
-  }
-
-  loadItems() {
-    this.numberOfItems = 0
-    this.populatedCategories = new Set([])
-    for (let category of this.categories) {
-      this.categorized_items[category] = []
-    }
-
-    let loading = this.loadingCtrl.create({
-      content: "Loading grocery list..."
-    })
-
-    loading.present()
-
-    let list = this.firebaseProvider.getItemsService()
-
-    list.get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          let item = doc.data()
-          item['id'] = doc.id
-          this.sortItem(item)
-          this.numberOfItems += 1
-        })
-      }).catch((err) => {
-        console.log(err)
-    })
-
-    loading.dismiss()
-  }
-
-  checkItem(item, index) {
-    let verb = "Removed "
-    if (item.isChecked) {
-      verb = "Added "
-    }
-
-    this.firebaseProvider.checkItemService(item)
-    this.categorized_items[item.category].splice(index, 1)
-    this.sortItem(item)
-
-    let toast = this.toastCtrl.create({
-      message: verb + item.name + "!",
-      duration: 3000,
-    }).present();
-  }
-
-  selectCategoryPrompt() {
-    let radioButtons = []
-    for (let category of this.categories) {
-      let category_obj = {
-        type: 'radio',
-        value: category,
-        label: category,
-      }
-      radioButtons.push(category_obj)
-    }
-
-    let categoryPrompt = this.alertCtrl.create({
-      title: 'Which Category?',
-      inputs: radioButtons,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: data => {
-            console.log('Cancel clicked')
-          }
-        },
-        {
-          text: 'Continue',
-          handler: data => {
-            this.addItemPrompt(data)
-          }
-        }
-      ]
-    })
-
-    categoryPrompt.present();
-  }
-
-  selectCategory(category) {
-    this.addItemPrompt(category)
   }
 
   addItemPrompt(category) {

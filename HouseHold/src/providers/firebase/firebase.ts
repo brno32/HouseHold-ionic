@@ -10,9 +10,8 @@ export class FirebaseProvider {
     console.log('Hello FirebaseProvider Provider')
   }
 
-  getItemsService() {
-    console.log("Items loaded")
-    return firebase.firestore().collection("items")
+  getItemsService(groupID) {
+    return firebase.firestore().collection("items").where("groupID", "==", groupID)
   }
 
   addItemService(data, category) {
