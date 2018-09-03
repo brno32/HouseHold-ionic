@@ -10,6 +10,10 @@ export class FirebaseProvider {
     console.log('Hello FirebaseProvider Provider')
   }
 
+  getUserId() {
+    return firebase.auth().currentUser.uid
+  }
+
   getItemsService(groupID) {
     return firebase.firestore().collection("items").where("groupID", "==", groupID)
   }
@@ -54,6 +58,19 @@ export class FirebaseProvider {
     firebase.auth().signOut().then(() => {
       console.log("Signed out")
     });
+  }
+
+  createGroupService(data) {
+    console.log(data)
+    firebase.firestore().collection("groups").add({
+      name: data.name,
+      password: data.password,
+      users: [this.getUserId()],
+    }).then((doc) => {
+      console.log(data.name + " added");
+    }).catch((err) => {
+      console.log(err)
+    })
   }
 
 }
