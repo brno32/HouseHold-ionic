@@ -232,7 +232,7 @@ export class ListPage {
               message: "Passwords don't match!",
               duration: 3000,
             }).present()
-            this.groupPrompt()
+            this.createGroupPrompt()
           }
           else {
             this.firebaseProvider.createGroupService(data)
@@ -246,7 +246,7 @@ export class ListPage {
     ]
     })
 
-    createGroupPrompt.present()
+    groupPrompt.present()
   }
 
   selectCategoryPrompt() {

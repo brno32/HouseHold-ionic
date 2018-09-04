@@ -20,17 +20,22 @@ export class LoginPage {
   }
 
   ionViewDidEnter() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in.
-        this.navCtrl.setRoot(ListPage)
-      } else {
-        // No user is signed in.
-      }
-    })
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          // User is signed in.
+          if (this.flag) {
+            this.navCtrl.setRoot(ListPage)
+          }
+
+          this.flag = false
+        } else {
+          // No user is signed in.
+        }
+      })
   }
 
   login() {
+    this.flag = false
     firebase.auth().signInWithEmailAndPassword(this.email, this.password).then((user) => {
       console.log(user)
 
