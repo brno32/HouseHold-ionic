@@ -13,12 +13,13 @@ export class LoginPage {
 
   email: string = ''
   password: string = ''
+  flag = true
 
   constructor(public navCtrl: NavController, public toastCtrl: ToastController) {
 
   }
 
-  ionViewWillEnter() {
+  ionViewDidEnter() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
@@ -26,7 +27,7 @@ export class LoginPage {
       } else {
         // No user is signed in.
       }
-    });
+    })
   }
 
   login() {

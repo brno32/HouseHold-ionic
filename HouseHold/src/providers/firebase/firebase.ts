@@ -73,4 +73,12 @@ export class FirebaseProvider {
     })
   }
 
+  findGroupService(data) {
+    return (
+      firebase.firestore().collection("groups")
+      .where("name", "==", data.name)
+      .where("password", "==", data.password)
+    )
+  }
+
 }

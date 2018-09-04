@@ -146,11 +146,11 @@ export class ListPage {
     title: 'Find Your HouseHold',
     inputs: [
       {
-        name: 'groupName',
+        name: 'name',
         placeholder: 'Your HouseHold',
       },
       {
-        name: 'groupPassword',
+        name: 'password',
         type: 'password',
         placeholder: 'HouseHold Password',
       },
@@ -174,7 +174,15 @@ export class ListPage {
         text: 'Join',
         handler: data => {
 
-          // TODO: firebase stuff
+          this.firebaseProvider.findGroupService(data).get()
+            .then((docs) => {
+              docs.forEach((doc) => {
+                let group = doc.data()
+                console.log(group)
+              })
+            }).catch((err) => {
+              console.log(err)
+          })
 
           let toast = this.toastCtrl.create({
             message: "Joined " + data.groupName + "!",
@@ -189,7 +197,7 @@ export class ListPage {
   }
 
   createGroupPrompt() {
-    let createGroupPrompt = this.alertCtrl.create({
+    let groupPrompt = this.alertCtrl.create({
     title: 'Find Your HouseHold',
     inputs: [
       {
@@ -224,12 +232,12 @@ export class ListPage {
               message: "Passwords don't match!",
               duration: 3000,
             }).present()
-            this.createGroupPrompt()
+            this.groupPrompt()
           }
           else {
             this.firebaseProvider.createGroupService(data)
             let toast = this.toastCtrl.create({
-              message: "Created " + data.groupName + "!",
+              message: "Created " + data.name + "!",
               duration: 3000,
             }).present()
           }
