@@ -64,17 +64,19 @@ export class ListPage {
     this.populatedCategories.add(item.category)
 
     if (item.isChecked) {
-      var index = 0
+      let index = 1 // ensure checked items are never at the beginning
       for (let i in this.categorized_items[item.category]) {
         if (this.categorized_items[item.category][i].isChecked) {
+          // get the index of the first checked item in the list
           index = Number(i); break
         }
       }
 
+      // insert the new item before the first checked item in the list
       this.categorized_items[item.category].splice(index, 0, item)
     }
     else {
-      this.categorized_items[item.category].unshift(item);
+      this.categorized_items[item.category].unshift(item)
     }
   }
 
@@ -276,6 +278,7 @@ export class ListPage {
           this.sortItem(item)
           this.numberOfItems += 1
         })
+
       }).catch((err) => {
         console.log(err)
     })
