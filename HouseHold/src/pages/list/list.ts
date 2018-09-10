@@ -109,24 +109,7 @@ export class ListPage {
 
     loading.present()
 
-    // let list = this.firebaseProvider.getItemsService(this.groupID)
-    this.getDjangoItems()
-
-    // if (this.groupID == "") {
-    //   this.joinGroupPrompt()
-    // }
-
-    // list.get()
-    //   .then((docs) => {
-    //     docs.forEach((doc) => {
-    //       let item = doc.data()
-    //       item['id'] = doc.id
-    //       this.sortItem(item)
-    //       this.numberOfItems += 1
-    //     })
-    //   }).catch((err) => {
-    //     console.log(err)
-    // })
+    this.setItems()
 
     loading.dismiss()
   }
@@ -137,7 +120,14 @@ export class ListPage {
       verb = "Added "
     }
 
-    this.firebaseProvider.checkItemService(item)
+    this.djangoProvider.checkItemService(item).subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log("Error occured");
+      }
+    );
     this.categorized_items[item.category].splice(index, 1)
     this.sortItem(item)
 
@@ -286,7 +276,7 @@ export class ListPage {
       ]
     })
 
-    this.createGroupPrompt.present();
+    categoryPrompt.present();
   }
 
   selectCategory(category) {
@@ -508,9 +498,6 @@ export class ListPage {
           text: 'Continue',
           handler: () => {
             console.log('Checkout clicked')
-
-            this.getDjangoItems()
-            console.log(this.items)
           }
         }
       ]
@@ -519,12 +506,12 @@ export class ListPage {
     checkoutPrompt.present()
   }
 
-  getDjangoItems() {
-    this.djangoProvider.getUrl().subscribe((data) => {
-      data.forEach((item) => {
+  setItems() {
+    this.djangoProvider.getItemsService().subscribe((data) => {
+      for (let item of data) {
         this.sortItem(item)
         this.numberOfItems += 1
-      })
+      }
     }),
     (err) => {
       console.log(err)
