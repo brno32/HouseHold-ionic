@@ -12,6 +12,7 @@ import { ListPage } from '../pages/list/list';
 
 import firebase from 'firebase';
 import { FirebaseProvider } from '../providers/firebase/firebase';
+import { DjangoProvider } from '../providers/django/django';
 
 var config = {
     apiKey: "AIzaSyBIKDvdgxOBt2HL9wlzPVrDHONjbeOevgc",
@@ -51,6 +52,7 @@ firebase.firestore().settings({
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     FirebaseProvider,
+    DjangoProvider,
   ]
 })
 export class AppModule {}

@@ -3,6 +3,7 @@ import { NavController, LoadingController, ToastController, AlertController } fr
 import { LoginPage } from '../login/login';
 
 import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { DjangoProvider } from '../../providers/django/django';
 
 @Component({
   selector: 'page-list',
@@ -32,6 +33,7 @@ export class ListPage {
     'Frozen',
     'Cleaning Products',
     'Toiletries',
+    'Hygiene',
     'Pet Care',
     'Miscellaneous',
   ]
@@ -43,8 +45,11 @@ export class ListPage {
 
   groupID : string = ""
 
+  items = []
+
   constructor(
     public firebaseProvider: FirebaseProvider,
+    public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
@@ -104,23 +109,24 @@ export class ListPage {
 
     loading.present()
 
-    let list = this.firebaseProvider.getItemsService(this.groupID)
+    // let list = this.firebaseProvider.getItemsService(this.groupID)
+    this.getDjangoItems()
 
-    if (this.groupID == "") {
-      this.joinGroupPrompt()
-    }
+    // if (this.groupID == "") {
+    //   this.joinGroupPrompt()
+    // }
 
-    list.get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          let item = doc.data()
-          item['id'] = doc.id
-          this.sortItem(item)
-          this.numberOfItems += 1
-        })
-      }).catch((err) => {
-        console.log(err)
-    })
+    // list.get()
+    //   .then((docs) => {
+    //     docs.forEach((doc) => {
+    //       let item = doc.data()
+    //       item['id'] = doc.id
+    //       this.sortItem(item)
+    //       this.numberOfItems += 1
+    //     })
+    //   }).catch((err) => {
+    //     console.log(err)
+    // })
 
     loading.dismiss()
   }
@@ -280,7 +286,7 @@ export class ListPage {
       ]
     })
 
-    createGroupPrompt.present();
+    this.createGroupPrompt.present();
   }
 
   selectCategory(category) {
@@ -502,12 +508,27 @@ export class ListPage {
           text: 'Continue',
           handler: () => {
             console.log('Checkout clicked')
+
+            this.getDjangoItems()
+            console.log(this.items)
           }
         }
       ]
     })
 
     checkoutPrompt.present()
+  }
+
+  getDjangoItems() {
+    this.djangoProvider.getUrl().subscribe((data) => {
+      data.forEach((item) => {
+        this.sortItem(item)
+        this.numberOfItems += 1
+      })
+    }),
+    (err) => {
+      console.log(err)
+    }
   }
 
   logout() {
