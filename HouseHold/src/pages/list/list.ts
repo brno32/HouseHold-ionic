@@ -192,6 +192,43 @@ export class ListPage {
     joinGroupPrompt.present()
   }
 
+  deleteItem(item, index) {
+    let alert = this.alertCtrl.create({
+      message: 'Delete ' + item.name + '?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked')
+            this.editItem(item, index)
+          }
+        },
+        {
+          text: 'Continue',
+          handler: () => {
+            this.categorized_items[item.category].splice(index, 1)
+            this.djangoProvider.deleteItemService(item).subscribe(
+              res => {
+                console.log(item.name + "Deleted")
+              },
+              err => {
+                console.log("Error occured")
+              }
+            );
+            this.checkIfCategoryEmpty(item.category)
+
+            let toast = this.toastCtrl.create({
+              message: "Deleted " + item.name,
+              duration: 3000,
+            }).present()
+          }
+        }
+      ]
+    })
+    alert.present()
+  }
+
   createGroupPrompt() {
     let groupPrompt = this.alertCtrl.create({
     title: 'Find Your HouseHold',
@@ -414,37 +451,6 @@ export class ListPage {
     })
 
     categoryPrompt.present()
-  }
-
-  deleteItem(item, index) {
-    let alert = this.alertCtrl.create({
-      message: 'Delete ' + item.name + '?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked')
-            this.editItem(item, index)
-          }
-        },
-        {
-          text: 'Continue',
-          handler: () => {
-            this.categorized_items[item.category].splice(index, 1)
-
-            this.firebaseProvider.deleteItemService(item)
-            this.checkIfCategoryEmpty(item.category)
-
-            let toast = this.toastCtrl.create({
-              message: "Deleted " + item.name,
-              duration: 3000,
-            }).present();
-          }
-        }
-      ]
-    })
-    alert.present()
   }
 
   addItemPrompt(category) {
