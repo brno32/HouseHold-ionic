@@ -120,14 +120,14 @@ export class ListPage {
       verb = "Added "
     }
 
-    this.djangoProvider.checkItemService(item).subscribe(
+    this.djangoProvider.updateItemService(item).subscribe(
       res => {
         console.log(res);
       },
       err => {
         console.log("Error occured");
       }
-    );
+    )
     this.categorized_items[item.category].splice(index, 1)
     this.sortItem(item)
 
@@ -387,7 +387,14 @@ export class ListPage {
             isChecked: item.isChecked,
           }
 
-          this.firebaseProvider.updateItemService(item, updatedItem)
+          this.djangoProvider.updateItemService(updatedItem).subscribe(
+            res => {
+              console.log(res);
+            },
+            err => {
+              console.log("Error occured");
+            }
+          )
           this.categorized_items[item.category].splice(index, 1)
           this.sortItem(updatedItem)
 
@@ -436,7 +443,14 @@ export class ListPage {
               isChecked: item.isChecked,
             }
 
-            this.firebaseProvider.updateItemService(item, updatedItem)
+            this.djangoProvider.updateItemService(updatedItem).subscribe(
+              res => {
+                console.log(res);
+              },
+              err => {
+                console.log("Error occured");
+              }
+            )
             this.categorized_items[item.category].splice(index, 1)
             this.sortItem(updatedItem)
             this.checkIfCategoryEmpty(item.category)
@@ -473,7 +487,18 @@ export class ListPage {
       {
         text: 'Add',
         handler: data => {
-          this.firebaseProvider.addItemService(data, category)
+          let item = {
+            name: data.name,
+            isChecked: false,
+            category: category,
+          }
+          this.djangoProvider.addItemService(item).subscribe((data) => {
+            this.sortItem(data)
+            this.numberOfItems += 1
+          }),
+          (err) => {
+            console.log(err)
+          }
           this.loadItems()
 
           let toast = this.toastCtrl.create({
