@@ -4,6 +4,7 @@ import { SignupPage } from '../signup/signup';
 import { ListPage } from '../list/list';
 
 import firebase from 'firebase';
+import { DjangoProvider } from '../../providers/django/django';
 
 @Component({
   selector: 'page-login',
@@ -15,7 +16,11 @@ export class LoginPage {
   password: string = ''
   flag = true
 
-  constructor(public navCtrl: NavController, public toastCtrl: ToastController) {
+  constructor(
+    public djangoProvider: DjangoProvider,
+    public navCtrl: NavController,
+    public toastCtrl: ToastController
+  ) {
 
   }
 
@@ -35,26 +40,27 @@ export class LoginPage {
   }
 
   login() {
-    this.flag = false
-    firebase.auth().signInWithEmailAndPassword(this.email, this.password).then((user) => {
-      console.log(user)
+    let user = {
+      username: this.email,
+      password: this.password,
+    }
 
-      this.toastCtrl.create({
-        message: "Welcome, " + user.user.displayName + "!",
-        duration: 3000,
-      }).present()
-
-      this.navCtrl.setRoot(ListPage)
-
-  }).catch((err) => {
-    console.log(err)
-
-    this.toastCtrl.create({
-      message: err.message,
-      duration: 3000,
-    }).present()
-  })
-}
+    this.djangoProvider.loginService(user).subscribe(
+      token => {
+        this.toastCtrl.create({
+          message: "Welcome" + "!",
+          duration: 3000,
+        }).present()
+        console.log(token.token)
+        this.navCtrl.setRoot(ListPage, {
+          data: token,
+        })
+      },
+      err => {
+        console.log("Error occured")
+      }
+    )
+  }
 
   goToSignUp() {
     this.navCtrl.push(SignupPage)

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, LoadingController, ToastController, AlertController } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 
 import { FirebaseProvider } from '../../providers/firebase/firebase';
@@ -47,14 +47,19 @@ export class ListPage {
 
   items = []
 
+  token = ""
+
   constructor(
     public firebaseProvider: FirebaseProvider,
     public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
+    public navParams: NavParams,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
   ) {
+    this.token = navParams.get('data')
+
     this.loadItems()
   }
 
@@ -538,10 +543,12 @@ export class ListPage {
   }
 
   setItems() {
-    this.djangoProvider.getItemsService().subscribe((data) => {
-      for (let item of data) {
-        this.sortItem(item)
-        this.numberOfItems += 1
+    this.djangoProvider.getItemsService(this.token).subscribe((data) => {
+      if (data instanceof Array) {
+        for (let item of data) {
+          this.sortItem(item)
+          this.numberOfItems += 1
+        }
       }
     }),
     (err) => {
