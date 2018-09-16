@@ -25,18 +25,7 @@ export class LoginPage {
   }
 
   ionViewDidEnter() {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          // User is signed in.
-          if (this.flag) {
-            this.navCtrl.setRoot(ListPage)
-          }
-
-          this.flag = false
-        } else {
-          // No user is signed in.
-        }
-      })
+      // TODO: store token in local storage and check here
   }
 
   login() {
@@ -51,7 +40,6 @@ export class LoginPage {
           message: "Welcome" + "!",
           duration: 3000,
         }).present()
-        console.log(token.token)
         this.navCtrl.setRoot(ListPage, {
           data: token,
         })
