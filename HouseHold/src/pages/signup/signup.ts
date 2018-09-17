@@ -4,6 +4,7 @@ import { LoginPage } from '../login/login';
 import { ListPage } from '../list/list';
 
 import firebase from 'firebase';
+import { DjangoProvider } from '../../providers/django/django';
 
 @Component({
   selector: 'page-signup',
@@ -16,6 +17,7 @@ export class SignupPage {
   password: string = ''
 
   constructor(
+    public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
     public toastCtrl: ToastController,
     public alertCtrl: AlertController
@@ -23,38 +25,34 @@ export class SignupPage {
   }
 
   signUp() {
-    firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-      .then((data) => {
-        let newUser: firebase.User = data.user
-        newUser.updateProfile({
-          displayName: this.name,
-          photoURL: "",
-        }).then(() => {
-          console.log("Updated")
+    let user = {
+      first_name: this.name,
+      username: this.email,
+      password: this.password,
+    }
 
-          this.alertCtrl.create({
-            title: "Account Created",
-            message: "Your account has been created successfully",
-            buttons: [
-              {
-                text: "Ok",
-                handler: () => {
-                  this.navCtrl.setRoot(ListPage)
-                }
+    this.djangoProvider.registerService(user).subscribe(
+      data => {
+        this.alertCtrl.create({
+          title: "Account Created",
+          message: "Your account has been created successfully",
+          buttons: [
+            {
+              text: "Ok",
+              handler: () => {
+                this.navCtrl.setRoot(ListPage, {
+                  data: data,
+                })
               }
-            ],
-          }).present()
-        }).catch((err) => {
-          console.log(err)
-        })
+            }
+          ],
+        }).present()
 
-    }).catch((err) => {
-      console.log(err)
-      this.toastCtrl.create({
-        message: err.message,
-        duration: 3000,
-      }).present()
-    })
+      },
+      err => {
+        console.log("Error occured")
+      }
+    )
   }
 
   goBack() {
