@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 
-import { FirebaseProvider } from '../../providers/firebase/firebase';
 import { DjangoProvider } from '../../providers/django/django';
 
 @Component({
@@ -50,7 +49,6 @@ export class ListPage {
   token = ""
 
   constructor(
-    public firebaseProvider: FirebaseProvider,
     public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -175,15 +173,15 @@ export class ListPage {
         text: 'Join',
         handler: data => {
 
-          this.firebaseProvider.findGroupService(data).get()
-            .then((docs) => {
-              docs.forEach((doc) => {
-                let group = doc.data()
-                console.log(group)
-              })
-            }).catch((err) => {
-              console.log(err)
-          })
+          // this.firebaseProvider.findGroupService(data).get()
+          //   .then((docs) => {
+          //     docs.forEach((doc) => {
+          //       let group = doc.data()
+          //       console.log(group)
+          //     })
+          //   }).catch((err) => {
+          //     console.log(err)
+          // })
 
           let toast = this.toastCtrl.create({
             message: "Joined " + data.groupName + "!",
@@ -273,7 +271,7 @@ export class ListPage {
             this.createGroupPrompt()
           }
           else {
-            this.firebaseProvider.createGroupService(data)
+            // this.firebaseProvider.createGroupService(data)
             let toast = this.toastCtrl.create({
               message: "Created " + data.name + "!",
               duration: 3000,
@@ -557,7 +555,7 @@ export class ListPage {
   }
 
   logout() {
-    this.firebaseProvider.logoutService()
+    this.djangoProvider.logoutService(this.token)
     this.navCtrl.setRoot(LoginPage)
 
     let toast = this.toastCtrl.create({

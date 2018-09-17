@@ -10,23 +10,7 @@ import { LoginPage } from '../pages/login/login';
 import { SignupPage } from '../pages/signup/signup';
 import { ListPage } from '../pages/list/list';
 
-import firebase from 'firebase';
-import { FirebaseProvider } from '../providers/firebase/firebase';
 import { DjangoProvider } from '../providers/django/django';
-
-var config = {
-    apiKey: "AIzaSyBIKDvdgxOBt2HL9wlzPVrDHONjbeOevgc",
-    authDomain: "grocery-app-d1fc1.firebaseapp.com",
-    databaseURL: "https://grocery-app-d1fc1.firebaseio.com",
-    projectId: "grocery-app-d1fc1",
-    storageBucket: "grocery-app-d1fc1.appspot.com",
-    messagingSenderId: "870514586428"
-};
-
-firebase.initializeApp(config);
-firebase.firestore().settings({
-  timestampsInSnapshots: true,
-})
 
 @NgModule({
   declarations: [
@@ -51,7 +35,6 @@ firebase.firestore().settings({
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    FirebaseProvider,
     DjangoProvider,
   ]
 })

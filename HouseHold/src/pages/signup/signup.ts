@@ -3,7 +3,6 @@ import { NavController, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { ListPage } from '../list/list';
 
-import firebase from 'firebase';
 import { DjangoProvider } from '../../providers/django/django';
 
 @Component({

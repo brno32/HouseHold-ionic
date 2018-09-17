@@ -3,7 +3,6 @@ import { NavController, ToastController } from 'ionic-angular';
 import { SignupPage } from '../signup/signup';
 import { ListPage } from '../list/list';
 
-import firebase from 'firebase';
 import { DjangoProvider } from '../../providers/django/django';
 
 @Component({
@@ -46,7 +45,7 @@ export class LoginPage {
       },
       err => {
         // TODO: handle all possible errors and display message to user
-        console.log(err)
+        console.log(err )
         this.toastCtrl.create({
           message: "Username and password do not match.",
           duration: 3000,
