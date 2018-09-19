@@ -7,52 +7,57 @@ export class DjangoProvider {
 
   readonly BASE_URL = 'http://127.0.0.1:8000/'
   readonly AUTH_URL = this.BASE_URL + 'auth/'
+  readonly GROUP_URL = this.BASE_URL + 'groups/'
 
-  api_url = this.BASE_URL + 'items/'
+  readonly API_URL = this.BASE_URL + 'items/'
 
-  login_url = this.AUTH_URL + 'token/login/'
-  logout_url = this.AUTH_URL + 'token/logout/'
+  readonly LOGIN_URL = this.AUTH_URL + 'token/login/'
+  readonly LOGOUT_URL = this.AUTH_URL + 'token/logout/'
 
-  create_user_url = this.AUTH_URL + 'users/'
-  create_jwt_url = this.BASE_URL + 'jwt/create/'
+  readonly CREATE_USER_URL = this.AUTH_URL + 'users/'
+  readonly CREATE_JWT_URL = this.BASE_URL + 'jwt/create/'
 
   getItemsService(token) {
-    if (token == null) {
-      return this.http.get(this.api_url)
-    }
+    // if (token == null) { return }
 
     const headers = new HttpHeaders()
     headers.append('Content-Type', 'application/json')
     headers.append('Authorization', 'JWT ' + token.token)
-    return this.http.get(this.api_url, {headers: headers})
+    console.log(this.API_URL)
+    console.log({headers: headers})
+    return this.http.get(this.API_URL, {headers: headers})
   }
 
   getItemService(item_id) {
-    return this.http.get(this.api_url + item_id + '/')
+    return this.http.get(this.API_URL + item_id + '/')
   }
 
   addItemService(item) {
-    return this.http.post(this.api_url, item)
+    return this.http.post(this.API_URL, item)
   }
 
   updateItemService(item) {
-    return this.http.put(this.api_url + item.id + '/', item)
+    return this.http.put(this.API_URL + item.id + '/', item)
   }
 
   deleteItemService(item) {
-    return this.http.delete(this.api_url + item.id + '/', item)
+    return this.http.delete(this.API_URL + item.id + '/', item)
   }
 
   // Authentication
-  loginService(user) {
-    return this.http.post(this.login_url, user)
+  registerService(user) {
+    return this.http.post(this.CREATE_USER_URL, user)
   }
 
-  registerService(user) {
-    return this.http.post(this.create_user_url, user)
+  loginService(user) {
+    return this.http.post(this.LOGIN_URL, user)
   }
 
   logoutService(user) {
-    return this.http.post(this.logout_url, user)
+    return this.http.post(this.LOGOUT_URL, user)
+  }
+
+  createGroupService(group) {
+    return this.http.post(this.GROUP_URL, group)
   }
 }

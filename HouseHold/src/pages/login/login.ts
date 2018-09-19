@@ -34,13 +34,13 @@ export class LoginPage {
     }
 
     this.djangoProvider.loginService(user).subscribe(
-      token => {
+      data => {
         this.toastCtrl.create({
           message: "Welcome" + "!",
           duration: 3000,
         }).present()
         this.navCtrl.setRoot(ListPage, {
-          data: token,
+          data: data,
         })
       },
       err => {

@@ -57,7 +57,7 @@ export class ListPage {
     private alertCtrl: AlertController,
   ) {
     this.token = navParams.get('data')
-
+    console.log(this.token)
     this.loadItems()
   }
 
@@ -89,7 +89,7 @@ export class ListPage {
   }
 
   checkIfCategoryEmpty(category) {
-    if (this.categorized_items[category].length == 0){
+    if (this.categorized_items[category].length == 0) {
       this.populatedCategories.delete(category)
     }
   }
@@ -532,6 +532,11 @@ export class ListPage {
           text: 'Continue',
           handler: () => {
             console.log('Checkout clicked')
+            let group = {
+              name: 'Hello'
+            }
+
+            this.djangoProvider.createGroupService(group)
           }
         }
       ]
@@ -541,9 +546,12 @@ export class ListPage {
   }
 
   setItems() {
+    // if (this.token == null || this.token == '') { return }
+
     this.djangoProvider.getItemsService(this.token).subscribe((data) => {
       if (data instanceof Array) {
         for (let item of data) {
+          console.log('fuck')
           this.sortItem(item)
           this.numberOfItems += 1
         }
