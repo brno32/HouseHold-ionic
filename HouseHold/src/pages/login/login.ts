@@ -45,7 +45,7 @@ export class LoginPage {
       },
       err => {
         // TODO: handle all possible errors and display message to user
-        console.log(err )
+        console.log(err)
         this.toastCtrl.create({
           message: "Username and password do not match.",
           duration: 3000,

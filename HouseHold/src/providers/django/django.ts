@@ -15,16 +15,15 @@ export class DjangoProvider {
   readonly LOGOUT_URL = this.AUTH_URL + 'token/logout/'
 
   readonly CREATE_USER_URL = this.AUTH_URL + 'users/'
-  readonly CREATE_JWT_URL = this.BASE_URL + 'jwt/create/'
 
   getItemsService(token) {
-    // if (token == null) { return }
+    if (token == null) { return }
 
-    const headers = new HttpHeaders()
-    headers.append('Content-Type', 'application/json')
-    headers.append('Authorization', 'JWT ' + token.token)
-    console.log(this.API_URL)
-    console.log({headers: headers})
+    let headers = new HttpHeaders()
+    headers = headers.append('Accept', 'application/json')
+    headers = headers.append('Content-Type', 'application/json')
+    headers = headers.append('Authorization', 'Token ' + token.auth_token)
+
     return this.http.get(this.API_URL, {headers: headers})
   }
 
