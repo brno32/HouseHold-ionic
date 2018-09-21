@@ -25,6 +25,7 @@ export class LoginPage {
 
   ionViewDidEnter() {
       // TODO: store token in local storage and check here
+      // Redirect to list view on verified token
   }
 
   login() {

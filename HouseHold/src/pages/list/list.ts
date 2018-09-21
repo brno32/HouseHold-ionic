@@ -122,7 +122,7 @@ export class ListPage {
       verb = "Added "
     }
 
-    this.djangoProvider.updateItemService(item).subscribe(
+    this.djangoProvider.updateItemService(item, this.token).subscribe(
       res => {
         console.log(res);
       },
@@ -532,10 +532,15 @@ export class ListPage {
           handler: () => {
             console.log('Checkout clicked')
             let group = {
-              name: 'Hello'
+              name: 'TestGroup2'
             }
 
-            this.djangoProvider.createGroupService(group)
+            this.djangoProvider.createGroupService(group, this.token).subscribe((data) => {
+              console.log(data)
+            }),
+            (err) => {
+              console.log(err)
+            }
           }
         }
       ]
