@@ -64,7 +64,8 @@ export class ListPage {
     this.populatedCategories.add(item.category)
 
     if (item.isChecked) {
-      let index = 1 // ensure checked items are never at the beginning
+      // ensure checked items are never at the beginning
+      let index = this.categorized_items[item.category].length
       for (let i in this.categorized_items[item.category]) {
         if (this.categorized_items[item.category][i].isChecked) {
           // get the index of the first checked item in the list
