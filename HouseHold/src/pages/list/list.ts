@@ -42,7 +42,7 @@ export class ListPage {
 
   numberOfItems : number = 0
 
-  groupID : string = ""
+  groupID = ""
 
   items = []
 
@@ -210,7 +210,7 @@ export class ListPage {
           text: 'Continue',
           handler: () => {
             this.categorized_items[item.category].splice(index, 1)
-            this.djangoProvider.deleteItemService(item).subscribe(
+            this.djangoProvider.deleteItemService(item, this.token).subscribe(
               res => {
                 console.log(item.name + "Deleted")
               },
@@ -389,7 +389,7 @@ export class ListPage {
             isChecked: item.isChecked,
           }
 
-          this.djangoProvider.updateItemService(updatedItem).subscribe(
+          this.djangoProvider.updateItemService(updatedItem, this.token).subscribe(
             res => {
               console.log(res);
             },
@@ -445,7 +445,7 @@ export class ListPage {
               isChecked: item.isChecked,
             }
 
-            this.djangoProvider.updateItemService(updatedItem).subscribe(
+            this.djangoProvider.updateItemService(updatedItem, this.token).subscribe(
               res => {
                 console.log(res);
               },
@@ -493,8 +493,10 @@ export class ListPage {
             name: data.name,
             isChecked: false,
             category: category,
+            group: this.groupID,
           }
-          this.djangoProvider.addItemService(item).subscribe((data) => {
+          this.djangoProvider.addItemService(item, this.token).subscribe((data) => {
+            console.log(data)
             this.sortItem(data)
             this.numberOfItems += 1
           }),
@@ -531,16 +533,6 @@ export class ListPage {
           text: 'Continue',
           handler: () => {
             console.log('Checkout clicked')
-            let group = {
-              name: 'TestGroup2'
-            }
-
-            this.djangoProvider.createGroupService(group, this.token).subscribe((data) => {
-              console.log(data)
-            }),
-            (err) => {
-              console.log(err)
-            }
           }
         }
       ]

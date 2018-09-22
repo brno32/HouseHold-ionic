@@ -25,7 +25,7 @@ export class DjangoProvider {
     return this.http.get(this.API_URL + item_id + '/', this.makeHeader(token))
   }
 
-  addItemService(item) {
+  addItemService(item, token) {
     return this.http.post(this.API_URL, item, this.makeHeader(token))
   }
 
@@ -33,8 +33,8 @@ export class DjangoProvider {
     return this.http.put(this.API_URL + item.id + '/', item, this.makeHeader(token))
   }
 
-  deleteItemService(item) {
-    return this.http.delete(this.API_URL + item.id + '/', item, this.makeHeader(token))
+  deleteItemService(item, token) {
+    return this.http.delete(this.API_URL + item.id + '/', this.makeHeader(token))
   }
 
   // Authentication
@@ -62,7 +62,7 @@ export class DjangoProvider {
     return this.http.post(this.GROUP_URL, group, this.makeHeader(token))
   }
 
-  findGroupService(group, token) {
-    return this.http.post(this.GROUP_URL, group, this.makeHeader(token))
+  findGroupService(data, token) {
+    return this.http.get(this.GROUP_URL + data.name + '/', this.makeHeader(token))
   }
 }
