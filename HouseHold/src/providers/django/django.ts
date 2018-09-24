@@ -62,12 +62,7 @@ export class DjangoProvider {
     return this.http.post(this.GROUP_URL, group, this.makeHeader(token))
   }
 
-  findGroupService(name, password, token) {
-    let group = {
-      name: name,
-      password: password,
-    }
-    
-    return this.http.patch(this.GROUP_URL + name + '/', group, this.makeHeader(token))
+  findGroupService(group, token) {
+    return this.http.patch(this.GROUP_URL + group.name + '/', group, this.makeHeader(token))
   }
 }

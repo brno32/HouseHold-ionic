@@ -9,6 +9,8 @@ import { MyApp } from './app.component';
 import { LoginPage } from '../pages/login/login';
 import { SignupPage } from '../pages/signup/signup';
 import { ListPage } from '../pages/list/list';
+import { GroupPage } from '../pages/group/group';
+import { CreateGroupPage } from '../pages/create-group/create-group';
 
 import { DjangoProvider } from '../providers/django/django';
 
@@ -17,6 +19,8 @@ import { DjangoProvider } from '../providers/django/django';
     MyApp,
     LoginPage,
     SignupPage,
+    GroupPage,
+    CreateGroupPage,
     ListPage,
   ],
   imports: [
@@ -29,6 +33,8 @@ import { DjangoProvider } from '../providers/django/django';
     MyApp,
     LoginPage,
     SignupPage,
+    GroupPage,
+    CreateGroupPage,
     ListPage,
   ],
   providers: [

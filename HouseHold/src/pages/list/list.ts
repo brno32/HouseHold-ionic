@@ -57,6 +57,7 @@ export class ListPage {
     private alertCtrl: AlertController,
   ) {
     this.token = navParams.get('data')
+    console.log(this.token)
     this.loadItems()
   }
 

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { ListPage } from '../list/list';
+import { GroupPage } from '../group/group';
 
 import { DjangoProvider } from '../../providers/django/django';
 
@@ -39,9 +40,33 @@ export class SignupPage {
             {
               text: "Ok",
               handler: () => {
-                this.navCtrl.setRoot(ListPage, {
-                  data: data,
-                })
+
+                let user = {
+                  username: this.email,
+                  password: this.password,
+                }
+
+                this.djangoProvider.loginService(user).subscribe(
+                  data => {
+                    this.toastCtrl.create({
+                      message: "Welcome" + "!",
+                      duration: 3000,
+                    }).present()
+                    
+                    this.navCtrl.setRoot(GroupPage, {
+                      data: data,
+                    })
+                  },
+                  err => {
+                    // TODO: handle all possible errors and display message to user
+                    console.log(err)
+                    this.toastCtrl.create({
+                      message: "Username and password do not match.",
+                      duration: 3000,
+                    }).present()
+                  }
+                )
+
               }
             }
           ],
