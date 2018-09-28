@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import { LoginPage } from '../login/login';
 
 import { DjangoProvider } from '../../providers/django/django';
@@ -46,8 +47,6 @@ export class ListPage {
 
   items = []
 
-  token = ""
-
   constructor(
     public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
@@ -56,8 +55,6 @@ export class ListPage {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
   ) {
-    this.token = navParams.get('data')
-    console.log(this.token)
     this.loadItems()
   }
 
@@ -123,7 +120,7 @@ export class ListPage {
       verb = "Added "
     }
 
-    this.djangoProvider.updateItemService(item, this.token).subscribe(
+    this.djangoProvider.updateItemService(item).subscribe(
       res => {
         console.log(res);
       },
@@ -172,17 +169,6 @@ export class ListPage {
       {
         text: 'Join',
         handler: data => {
-
-          // this.firebaseProvider.findGroupService(data).get()
-          //   .then((docs) => {
-          //     docs.forEach((doc) => {
-          //       let group = doc.data()
-          //       console.log(group)
-          //     })
-          //   }).catch((err) => {
-          //     console.log(err)
-          // })
-
           let toast = this.toastCtrl.create({
             message: "Joined " + data.groupName + "!",
             duration: 3000,
@@ -211,7 +197,7 @@ export class ListPage {
           text: 'Continue',
           handler: () => {
             this.categorized_items[item.category].splice(index, 1)
-            this.djangoProvider.deleteItemService(item, this.token).subscribe(
+            this.djangoProvider.deleteItemService(item).subscribe(
               res => {
                 console.log(item.name + "Deleted")
               },
@@ -390,7 +376,7 @@ export class ListPage {
             isChecked: item.isChecked,
           }
 
-          this.djangoProvider.updateItemService(updatedItem, this.token).subscribe(
+          this.djangoProvider.updateItemService(updatedItem).subscribe(
             res => {
               console.log(res);
             },
@@ -446,7 +432,7 @@ export class ListPage {
               isChecked: item.isChecked,
             }
 
-            this.djangoProvider.updateItemService(updatedItem, this.token).subscribe(
+            this.djangoProvider.updateItemService(updatedItem).subscribe(
               res => {
                 console.log(res);
               },
@@ -496,7 +482,8 @@ export class ListPage {
             category: category,
             group: this.groupID,
           }
-          this.djangoProvider.addItemService(item, this.token).subscribe((data) => {
+          this.djangoProvider.addItemService(item).subscribe(
+            (data) => {
             console.log(data)
             this.sortItem(data)
             this.numberOfItems += 1
@@ -543,9 +530,7 @@ export class ListPage {
   }
 
   setItems() {
-    if (this.token == null || this.token == '') { return }
-
-    this.djangoProvider.getItemsService(this.token).subscribe((data) => {
+    this.djangoProvider.getItemsService().subscribe((data) => {
       if (data instanceof Array) {
         for (let item of data) {
           this.sortItem(item)
@@ -559,7 +544,7 @@ export class ListPage {
   }
 
   logout() {
-    this.djangoProvider.logoutService(this.token)
+    this.djangoProvider.logoutService()
     this.navCtrl.setRoot(LoginPage)
 
     let toast = this.toastCtrl.create({

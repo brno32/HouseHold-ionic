@@ -15,17 +15,13 @@ export class CreateGroupPage {
   name: string = ''
   password: string = ''
 
-  token = ""
-
   constructor(
     public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
     public navParams: NavParams,
     public toastCtrl: ToastController,
     public alertCtrl: AlertController
-  ) {
-    this.token = navParams.get('data')
-  }
+  ) {}
 
   createGroup() {
     let group = {
@@ -33,31 +29,18 @@ export class CreateGroupPage {
       password: this.password,
     }
 
-    this.djangoProvider.createGroupService(group, this.token).subscribe(
+    this.djangoProvider.createGroupService(group).subscribe(
       data => {
-        this.alertCtrl.create({
-          title: "HouseHold created!",
-          message: "You have successfully created " + this.name,
-          buttons: [
-            {
-              text: "Ok",
-              handler: () => {
+        this.djangoProvider.findGroupService(group).subscribe(
+          data => {
+            this.showSuccessToast()
 
-                this.djangoProvider.findGroupService(group, this.token).subscribe(
-                  data => {
-                    this.navCtrl.setRoot(ListPage, {
-                      data: this.token,
-                    })
-                  },
-                  err => {
-                    console.log(this.name + " not found.")
-                  }
-                )
-              }
-            }
-          ],
-        }).present()
-
+            this.navCtrl.setRoot(ListPage)
+          },
+          err => {
+            console.log(this.name + " not found.")
+          }
+        )
       },
       err => {
         console.log("Error occured")
@@ -67,6 +50,13 @@ export class CreateGroupPage {
 
   goBack() {
     this.navCtrl.pop()
+  }
+
+  showSuccessToast() {
+    let toast = this.toastCtrl.create({
+      message: this.name + " created",
+      duration: 3000,
+    }).present()
   }
 
 }

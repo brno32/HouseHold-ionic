@@ -1,9 +1,25 @@
 import { Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
+import { Events } from 'ionic-angular';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class DjangoProvider {
-  constructor(private http: HttpClient) { }
+
+  token = ""
+
+  constructor(
+    public events: Events,
+    private http: HttpClient,
+    private storage: Storage,
+  ) {
+    events.subscribe('setToken', (topic, data) => {
+      this.setToken()
+    })
+
+
+    this.setToken()
+  }
 
   readonly BASE_URL = 'http://127.0.0.1:8000/'
   readonly AUTH_URL = this.BASE_URL + 'auth/'
@@ -16,33 +32,33 @@ export class DjangoProvider {
 
   readonly CREATE_USER_URL = this.AUTH_URL + 'users/'
 
-  getItemsService(token) {
-    if (token == null) { return }
-    return this.http.get(this.API_URL, this.makeHeader(token))
+  getItemsService() {
+    if (this.token == null) { return }
+    return this.http.get(this.API_URL, this.makeHeader())
   }
 
-  getItemService(item_id, token) {
-    return this.http.get(this.API_URL + item_id + '/', this.makeHeader(token))
+  getItemService(item_id) {
+    return this.http.get(this.API_URL + item_id + '/', this.makeHeader())
   }
 
-  addItemService(item, token) {
-    return this.http.post(this.API_URL, item, this.makeHeader(token))
+  addItemService(item) {
+    return this.http.post(this.API_URL, item, this.makeHeader())
   }
 
-  updateItemService(item, token) {
-    return this.http.put(this.API_URL + item.id + '/', item, this.makeHeader(token))
+  updateItemService(item) {
+    return this.http.put(this.API_URL + item.id + '/', item, this.makeHeader())
   }
 
-  deleteItemService(item, token) {
-    return this.http.delete(this.API_URL + item.id + '/', this.makeHeader(token))
+  deleteItemService(item) {
+    return this.http.delete(this.API_URL + item.id + '/', this.makeHeader())
   }
 
   // Authentication
-  makeHeader(token) {
+  makeHeader() {
     let headers = new HttpHeaders()
     headers = headers.append('Accept', 'application/json')
     headers = headers.append('Content-Type', 'application/json')
-    headers = headers.append('Authorization', 'Token ' + token.auth_token)
+    headers = headers.append('Authorization', 'Token ' + this.token)
     return {headers: headers}
   }
 
@@ -54,15 +70,25 @@ export class DjangoProvider {
     return this.http.post(this.LOGIN_URL, user)
   }
 
-  logoutService(user) {
-    return this.http.post(this.LOGOUT_URL, user)
+  logoutService() {
+    return this.http.post(this.LOGOUT_URL, this.token)
   }
 
-  createGroupService(group, token) {
-    return this.http.post(this.GROUP_URL, group, this.makeHeader(token))
+  createGroupService(group) {
+    return this.http.post(this.GROUP_URL, group, this.makeHeader())
   }
 
-  findGroupService(group, token) {
-    return this.http.patch(this.GROUP_URL + group.name + '/', group, this.makeHeader(token))
+  findGroupService(group) {
+    return this.http.put(this.GROUP_URL + group.name + '/', group, this.makeHeader())
+  }
+
+  setToken() {
+    this.storage.get('token').then((token) => {
+      this.token = token
+      console.log(this.token)
+    },
+    (err) => {
+      console.log(err)
+    })
   }
 }

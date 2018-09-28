@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController, AlertController } from 'ionic-angular';
+import { Events, NavController, NavParams, ToastController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { ListPage } from '../list/list';
 import { CreateGroupPage } from '../create-group/create-group';
@@ -15,16 +15,15 @@ export class GroupPage {
   name: string = ''
   password: string = ''
 
-  token = ""
-
   constructor(
     public djangoProvider: DjangoProvider,
+    public events: Events,
     public navCtrl: NavController,
     public navParams: NavParams,
     public toastCtrl: ToastController,
     public alertCtrl: AlertController
   ) {
-    this.token = navParams.get('data')
+    this.events.publish('setToken', '')
   }
 
   findGroup() {
@@ -33,23 +32,10 @@ export class GroupPage {
       password: this.password,
     }
 
-    this.djangoProvider.findGroupService(group, this.token).subscribe(
+    this.djangoProvider.findGroupService(group).subscribe(
       data => {
-        this.alertCtrl.create({
-          title: "HouseHold found!",
-          message: "You have successfully joined " + this.name,
-          buttons: [
-            {
-              text: "Ok",
-              handler: () => {
-                this.navCtrl.setRoot(ListPage, {
-                  data: this.token,
-                })
-              }
-            }
-          ],
-        }).present()
-
+        this.showSuccessToast()
+        this.navCtrl.setRoot(ListPage)
       },
       err => {
         console.log(this.name + " not found.")
@@ -58,9 +44,14 @@ export class GroupPage {
   }
 
   goToCreateGroupPage() {
-    this.navCtrl.push(CreateGroupPage, {
-      data: this.token,
-    })
+    this.navCtrl.push(CreateGroupPage)
+  }
+
+  showSuccessToast() {
+    let toast = this.toastCtrl.create({
+      message: this.name + " joined",
+      duration: 3000,
+    }).present();
   }
 
 }
