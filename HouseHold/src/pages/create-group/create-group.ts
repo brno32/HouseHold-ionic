@@ -31,16 +31,8 @@ export class CreateGroupPage {
 
     this.djangoProvider.createGroupService(group).subscribe(
       data => {
-        this.djangoProvider.findGroupService(group).subscribe(
-          data => {
-            this.showSuccessToast()
-
-            this.navCtrl.setRoot(ListPage)
-          },
-          err => {
-            console.log(this.name + " not found.")
-          }
-        )
+          this.showSuccessToast()
+          this.navCtrl.setRoot(ListPage)
       },
       err => {
         console.log("Error occured")
