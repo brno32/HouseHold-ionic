@@ -55,7 +55,7 @@ export class LoginPage {
 
   showSuccessToast() {
     let toast = this.toastCtrl.create({
-      message: "Welcome !",
+      message: "Welcome!",
       duration: 3000,
     }).present();
   }

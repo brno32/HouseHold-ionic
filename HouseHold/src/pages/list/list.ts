@@ -346,6 +346,31 @@ export class ListPage {
     editPrompt.present()
   }
 
+  showLogoutPrompt() {
+    let logoutPrompt = this.alertCtrl.create({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked')
+          }
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            console.log('Logout clicked')
+            this.logout()
+          }
+        }
+      ]
+    })
+
+    logoutPrompt.present()
+  }
+
   editItemName(item, index) {
     let editItemNamePrompt = this.alertCtrl.create({
     title: 'Editing: ' + item.name + ' in ' + item.category,
@@ -521,6 +546,18 @@ export class ListPage {
           text: 'Continue',
           handler: () => {
             console.log('Checkout clicked')
+
+            for (let category of this.categories) {
+              if (this.checkIfPopulated(category)) {
+                let index = 0
+                for (let item of this.categorized_items[category]) {
+                  if (item.isChecked) {
+                    this.deleteItem(item, index)
+                  }
+                  index += 1
+                }
+              }
+            }
           }
         }
       ]
