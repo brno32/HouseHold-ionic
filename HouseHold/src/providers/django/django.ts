@@ -16,9 +16,6 @@ export class DjangoProvider {
     events.subscribe('setToken', (topic, data) => {
       this.setToken()
     })
-
-
-    this.setToken()
   }
 
   readonly BASE_URL = 'http://127.0.0.1:8000/'
@@ -33,7 +30,6 @@ export class DjangoProvider {
   readonly CREATE_USER_URL = this.AUTH_URL + 'users/'
 
   getItemsService() {
-    if (this.token == null) { return }
     return this.http.get(this.API_URL, this.makeHeader())
   }
 
@@ -71,7 +67,7 @@ export class DjangoProvider {
   }
 
   logoutService() {
-    return this.http.post(this.LOGOUT_URL, this.token)
+    return this.http.post(this.LOGOUT_URL, {}, this.makeHeader())
   }
 
   createGroupService(group) {
@@ -85,10 +81,11 @@ export class DjangoProvider {
   setToken() {
     this.storage.get('token').then((token) => {
       this.token = token
-      console.log(this.token)
+      this.events.publish('loadItems', '')
     },
     (err) => {
       console.log(err)
+      this.token = ''
     })
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ToastController } from 'ionic-angular';
+import { Events, NavController, ToastController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { SignupPage } from '../signup/signup';
 import { ListPage } from '../list/list';
@@ -20,13 +20,9 @@ export class LoginPage {
     public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
     public toastCtrl: ToastController,
+    public events: Events,
     private storage: Storage,
   ) {}
-
-  ionViewDidEnter() {
-      // TODO: store token in local this.storage and check here
-      // Redirect to list view on verified token
-  }
 
   login() {
     let user = {
@@ -37,9 +33,12 @@ export class LoginPage {
     this.djangoProvider.loginService(user).subscribe(
       data => {
         if (data.hasOwnProperty('auth_token')) {
-          this.storage.set('token', data['auth_token'])
-          this.navCtrl.setRoot(ListPage)
-          this.showSuccessToast()
+          this.storage.set('token', data['auth_token']).then((res) => {
+              this.showSuccessToast()
+              this.events.publish('setToken', '')
+              this.navCtrl.setRoot(ListPage)
+            }
+          )
         }
       },
       err => {

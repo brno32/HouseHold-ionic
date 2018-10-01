@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
+import { Events, NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { LoginPage } from '../login/login';
 
@@ -54,8 +54,12 @@ export class ListPage {
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    public events: Events,
+    private storage: Storage,
   ) {
-    this.loadItems()
+    events.subscribe('loadItems', (topic, data) => {
+      this.loadItems()
+    })
   }
 
   refresh(event) {
@@ -581,12 +585,17 @@ export class ListPage {
   }
 
   logout() {
-    this.djangoProvider.logoutService()
-    this.navCtrl.setRoot(LoginPage)
-
-    let toast = this.toastCtrl.create({
-      message: "Logged out",
-      duration: 3000,
-    }).present()
+    this.djangoProvider.logoutService().subscribe(
+      (data) => {
+        this.navCtrl.setRoot(LoginPage)
+        this.storage.remove('token')
+        let toast = this.toastCtrl.create({
+          message: "Logged out",
+          duration: 3000,
+        }).present()
+    }),
+    (err) => {
+      console.log(err)
+    }
   }
 }
