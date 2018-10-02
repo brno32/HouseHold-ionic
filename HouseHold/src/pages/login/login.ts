@@ -35,7 +35,6 @@ export class LoginPage {
         if (data.hasOwnProperty('auth_token')) {
           this.storage.set('token', data['auth_token']).then((res) => {
               this.showSuccessToast()
-              this.events.publish('setToken', '')
               this.navCtrl.setRoot(ListPage)
             }
           )

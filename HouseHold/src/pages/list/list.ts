@@ -58,12 +58,16 @@ export class ListPage {
     private storage: Storage,
   ) {
     events.subscribe('loadItems', (topic, data) => {
-      this.loadItems()
+    this.loadItems()
     })
   }
 
+  ionViewDidLoad() {
+    this.events.publish('setToken', '')
+  }
+
   refresh(event) {
-    this.loadItems()
+  this.loadItems()
 
     if (this.infiniteEvent != null) {
       this.infiniteEvent.enable(true)
@@ -589,6 +593,7 @@ export class ListPage {
       (data) => {
         this.navCtrl.setRoot(LoginPage)
         this.storage.remove('token')
+        this.events.unsubscribe('loadItems')
         let toast = this.toastCtrl.create({
           message: "Logged out",
           duration: 3000,
