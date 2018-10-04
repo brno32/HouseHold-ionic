@@ -207,7 +207,7 @@ export class ListPage {
             this.categorized_items[item.category].splice(index, 1)
             this.djangoProvider.deleteItemService(item).subscribe(
               res => {
-                console.log(item.name + "Deleted")
+                console.log(item.name + " deleted")
               },
               err => {
                 console.log("Error occured")
@@ -491,48 +491,48 @@ export class ListPage {
 
   addItemPrompt(category) {
     let itemPrompt = this.alertCtrl.create({
-    title: 'Add Item to ' + category,
-    inputs: [
-      {
-        name: 'name',
-        placeholder: 'Name of item'
-      }
-    ],
-    buttons: [
-      {
-        text: 'Cancel',
-        role: 'cancel',
-        handler: data => {
-          console.log('Cancel clicked')
+      title: 'Add Item to ' + category,
+      inputs: [
+        {
+          name: 'name',
+          placeholder: 'Name of item'
         }
-      },
-      {
-        text: 'Add',
-        handler: data => {
-          let item = {
-            name: data.name,
-            isChecked: false,
-            category: category,
-            group: this.groupID,
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked')
           }
-          this.djangoProvider.addItemService(item).subscribe(
-            (data) => {
-            console.log(data)
-            this.sortItem(data)
-            this.numberOfItems += 1
-          }),
-          (err) => {
-            console.log(err)
-          }
-          this.loadItems()
+        },
+        {
+          text: 'Add',
+          handler: data => {
+            let item = {
+              name: data.name,
+              isChecked: false,
+              category: category,
+              group: this.groupID,
+            }
+            this.djangoProvider.addItemService(item).subscribe(
+              (data) => {
+              console.log(data)
+              this.sortItem(data)
+              this.numberOfItems += 1
+            }),
+            (err) => {
+              console.log(err)
+            }
+            this.loadItems()
 
-          let toast = this.toastCtrl.create({
-            message: "Added " + data.name + "!",
-            duration: 3000,
-          }).present()
+            let toast = this.toastCtrl.create({
+              message: "Added " + data.name + "!",
+              duration: 3000,
+            }).present()
+          }
         }
-      }
-    ]
+      ]
     })
 
     itemPrompt.present()
@@ -560,7 +560,16 @@ export class ListPage {
                 let index = 0
                 for (let item of this.categorized_items[category]) {
                   if (item.isChecked) {
-                    this.deleteItem(item, index)
+                    this.categorized_items[item.category].splice(index, 1)
+                    this.djangoProvider.deleteItemService(item).subscribe(
+                      res => {
+                        console.log(item.name + " deleted")
+                      },
+                      err => {
+                        console.log("Error occured")
+                      }
+                    );
+                    this.checkIfCategoryEmpty(item.category)
                   }
                   index += 1
                 }
