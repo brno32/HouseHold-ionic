@@ -18,7 +18,8 @@ export class DjangoProvider {
     })
   }
 
-  readonly BASE_URL = 'http://127.0.0.1:8000/'
+  readonly BASE_URL = 'http://69.55.55.164/'
+  // readonly BASE_URL = 'http://127.0.0.1:8000/'
   readonly AUTH_URL = this.BASE_URL + 'auth/'
 
   readonly API_URL = this.BASE_URL + 'items/'
