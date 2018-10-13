@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, LoadingController, ToastController, AlertController } from 'ionic-angular';
+import { Events, NavController, NavParams, LoadingController, ToastController, AlertController } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import { LoginPage } from '../login/login';
 
-import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { DjangoProvider } from '../../providers/django/django';
 
 @Component({
   selector: 'page-list',
@@ -32,6 +33,7 @@ export class ListPage {
     'Frozen',
     'Cleaning Products',
     'Toiletries',
+    'Hygiene',
     'Pet Care',
     'Miscellaneous',
   ]
@@ -41,18 +43,31 @@ export class ListPage {
 
   numberOfItems : number = 0
 
+  groupID = ""
+
+  items = []
+
   constructor(
-    public firebaseProvider: FirebaseProvider,
+    public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
+    public navParams: NavParams,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    public events: Events,
+    private storage: Storage,
   ) {
+    events.subscribe('loadItems', (topic, data) => {
     this.loadItems()
+    })
+  }
+
+  ionViewDidLoad() {
+    this.events.publish('setToken', '')
   }
 
   refresh(event) {
-    this.loadItems()
+  this.loadItems()
 
     if (this.infiniteEvent != null) {
       this.infiniteEvent.enable(true)
@@ -82,7 +97,7 @@ export class ListPage {
   }
 
   checkIfCategoryEmpty(category) {
-    if (this.categorized_items[category].length == 0){
+    if (this.categorized_items[category].length == 0) {
       this.populatedCategories.delete(category)
     }
   }
@@ -90,6 +105,219 @@ export class ListPage {
   checkIfPopulated(category) {
     let populatedCategories : string[] = Array.from(this.populatedCategories)
     return populatedCategories.includes(category)
+  }
+
+  loadItems() {
+    this.numberOfItems = 0
+    this.populatedCategories = new Set([])
+    for (let category of this.categories) {
+      this.categorized_items[category] = []
+    }
+
+    let loading = this.loadingCtrl.create({
+      content: "Loading grocery list..."
+    })
+
+    loading.present()
+
+    this.setItems()
+
+    loading.dismiss()
+  }
+
+  checkItem(item, index) {
+    let verb = "Removed "
+    if (item.isChecked) {
+      verb = "Added "
+    }
+
+    this.djangoProvider.updateItemService(item).subscribe(
+      res => {
+        console.log(res);
+      },
+      err => {
+        console.log("Error occured");
+      }
+    )
+    this.categorized_items[item.category].splice(index, 1)
+    this.sortItem(item)
+
+    let toast = this.toastCtrl.create({
+      message: verb + item.name + "!",
+      duration: 3000,
+    }).present();
+  }
+
+  joinGroupPrompt() {
+    let joinGroupPrompt = this.alertCtrl.create({
+    title: 'Find Your HouseHold',
+    inputs: [
+      {
+        name: 'name',
+        placeholder: 'Your HouseHold',
+      },
+      {
+        name: 'password',
+        type: 'password',
+        placeholder: 'HouseHold Password',
+      },
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked')
+        }
+      },
+      {
+        text: 'Create HouseHold',
+        handler: data => {
+          console.log('Create HouseHold clicked')
+          this.createGroupPrompt()
+        }
+      },
+      {
+        text: 'Join',
+        handler: data => {
+          let toast = this.toastCtrl.create({
+            message: "Joined " + data.groupName + "!",
+            duration: 3000,
+          }).present()
+        }
+      },
+    ]
+    })
+
+    joinGroupPrompt.present()
+  }
+
+  deleteItem(item, index) {
+    let alert = this.alertCtrl.create({
+      message: 'Delete ' + item.name + '?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked')
+            this.editItem(item, index)
+          }
+        },
+        {
+          text: 'Continue',
+          handler: () => {
+            this.categorized_items[item.category].splice(index, 1)
+            this.djangoProvider.deleteItemService(item).subscribe(
+              res => {
+                console.log(item.name + " deleted")
+              },
+              err => {
+                console.log("Error occured")
+              }
+            );
+            this.checkIfCategoryEmpty(item.category)
+
+            let toast = this.toastCtrl.create({
+              message: "Deleted " + item.name,
+              duration: 3000,
+            }).present()
+          }
+        }
+      ]
+    })
+    alert.present()
+  }
+
+  createGroupPrompt() {
+    let groupPrompt = this.alertCtrl.create({
+    title: 'Find Your HouseHold',
+    inputs: [
+      {
+        name: 'name',
+        placeholder: 'Your HouseHold',
+      },
+      {
+        name: 'password',
+        type: 'password',
+        placeholder: 'HouseHold Password',
+      },
+      {
+        name: 'password2',
+        type: 'password',
+        placeholder: 'Confirm Password',
+      },
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked')
+        }
+      },
+      {
+        text: 'Join',
+        handler: data => {
+
+          if (data.password != data.password2) {
+            let toast = this.toastCtrl.create({
+              message: "Passwords don't match!",
+              duration: 3000,
+            }).present()
+            this.createGroupPrompt()
+          }
+          else {
+            // this.firebaseProvider.createGroupService(data)
+            let toast = this.toastCtrl.create({
+              message: "Created " + data.name + "!",
+              duration: 3000,
+            }).present()
+          }
+        }
+      },
+    ]
+    })
+
+    groupPrompt.present()
+  }
+
+  selectCategoryPrompt() {
+    let radioButtons = []
+    for (let category of this.categories) {
+      let category_obj = {
+        type: 'radio',
+        value: category,
+        label: category,
+      }
+      radioButtons.push(category_obj)
+    }
+
+    let categoryPrompt = this.alertCtrl.create({
+      title: 'Which Category?',
+      inputs: radioButtons,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked')
+          }
+        },
+        {
+          text: 'Continue',
+          handler: data => {
+            this.addItemPrompt(data)
+          }
+        }
+      ]
+    })
+
+    categoryPrompt.present();
+  }
+
+  selectCategory(category) {
+    this.addItemPrompt(category)
   }
 
   editItem(item, index) {
@@ -129,6 +357,31 @@ export class ListPage {
     editPrompt.present()
   }
 
+  showLogoutPrompt() {
+    let logoutPrompt = this.alertCtrl.create({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked')
+          }
+        },
+        {
+          text: 'Logout',
+          handler: () => {
+            console.log('Logout clicked')
+            this.logout()
+          }
+        }
+      ]
+    })
+
+    logoutPrompt.present()
+  }
+
   editItemName(item, index) {
     let editItemNamePrompt = this.alertCtrl.create({
     title: 'Editing: ' + item.name + ' in ' + item.category,
@@ -159,7 +412,14 @@ export class ListPage {
             isChecked: item.isChecked,
           }
 
-          this.firebaseProvider.updateItemService(item, updatedItem)
+          this.djangoProvider.updateItemService(updatedItem).subscribe(
+            res => {
+              console.log(res);
+            },
+            err => {
+              console.log("Error occured");
+            }
+          )
           this.categorized_items[item.category].splice(index, 1)
           this.sortItem(updatedItem)
 
@@ -208,7 +468,14 @@ export class ListPage {
               isChecked: item.isChecked,
             }
 
-            this.firebaseProvider.updateItemService(item, updatedItem)
+            this.djangoProvider.updateItemService(updatedItem).subscribe(
+              res => {
+                console.log(res);
+              },
+              err => {
+                console.log("Error occured");
+              }
+            )
             this.categorized_items[item.category].splice(index, 1)
             this.sortItem(updatedItem)
             this.checkIfCategoryEmpty(item.category)
@@ -225,32 +492,15 @@ export class ListPage {
     categoryPrompt.present()
   }
 
-  deleteItem(item, index) {
-    let alert = this.alertCtrl.create({
-      message: 'Delete ' + item.name + '?',
-      buttons: [
+  addItemPrompt(category) {
+    let itemPrompt = this.alertCtrl.create({
+      title: 'Add Item to ' + category,
+      inputs: [
         {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked')
-            this.editItem(item, index)
-          }
-        },
-        {
-          text: 'Continue',
-          handler: () => {
-            this.categorized_items[item.category].splice(index, 1)
-
-            this.firebaseProvider.deleteItemService(item)
-            this.checkIfCategoryEmpty(item.category)
-
-            let toast = this.toastCtrl.create({
-              message: "Deleted " + item.name,
-              duration: 3000,
-            }).present();
-          }
+          name: 'name',
+          placeholder: 'Name of item'
         }
+<<<<<<< HEAD
       ]
     })
     alert.present()
@@ -317,6 +567,9 @@ export class ListPage {
     let categoryPrompt = this.alertCtrl.create({
       title: 'Which Category?',
       inputs: radioButtons,
+=======
+      ],
+>>>>>>> dev
       buttons: [
         {
           text: 'Cancel',
@@ -326,51 +579,32 @@ export class ListPage {
           }
         },
         {
-          text: 'Continue',
+          text: 'Add',
           handler: data => {
-            this.addItemPrompt(data)
+            let item = {
+              name: data.name,
+              isChecked: false,
+              category: category,
+              group: this.groupID,
+            }
+            this.djangoProvider.addItemService(item).subscribe(
+              (data) => {
+              console.log(data)
+              this.sortItem(data)
+              this.numberOfItems += 1
+            }),
+            (err) => {
+              console.log(err)
+            }
+            this.loadItems()
+
+            let toast = this.toastCtrl.create({
+              message: "Added " + data.name + "!",
+              duration: 3000,
+            }).present()
           }
         }
       ]
-    })
-
-    categoryPrompt.present();
-  }
-
-  selectCategory(category) {
-    this.addItemPrompt(category)
-  }
-
-  addItemPrompt(category) {
-    let itemPrompt = this.alertCtrl.create({
-    title: 'Add Item to ' + category,
-    inputs: [
-      {
-        name: 'name',
-        placeholder: 'Name of item'
-      }
-    ],
-    buttons: [
-      {
-        text: 'Cancel',
-        role: 'cancel',
-        handler: data => {
-          console.log('Cancel clicked')
-        }
-      },
-      {
-        text: 'Add',
-        handler: data => {
-          this.firebaseProvider.addItemService(data, category)
-          this.loadItems()
-
-          let toast = this.toastCtrl.create({
-            message: "Added " + data.name + "!",
-            duration: 3000,
-          }).present()
-        }
-      }
-    ]
     })
 
     itemPrompt.present()
@@ -392,6 +626,27 @@ export class ListPage {
           text: 'Continue',
           handler: () => {
             console.log('Checkout clicked')
+
+            for (let category of this.categories) {
+              if (this.checkIfPopulated(category)) {
+                let index = 0
+                for (let item of this.categorized_items[category]) {
+                  if (item.isChecked) {
+                    this.categorized_items[item.category].splice(index, 1)
+                    this.djangoProvider.deleteItemService(item).subscribe(
+                      res => {
+                        console.log(item.name + " deleted")
+                      },
+                      err => {
+                        console.log("Error occured")
+                      }
+                    );
+                    this.checkIfCategoryEmpty(item.category)
+                  }
+                  index += 1
+                }
+              }
+            }
           }
         }
       ]
@@ -400,13 +655,33 @@ export class ListPage {
     checkoutPrompt.present()
   }
 
-  logout() {
-    this.firebaseProvider.logoutService()
-    this.navCtrl.setRoot(LoginPage)
+  setItems() {
+    this.djangoProvider.getItemsService().subscribe((data) => {
+      if (data instanceof Array) {
+        for (let item of data) {
+          this.sortItem(item)
+          this.numberOfItems += 1
+        }
+      }
+    }),
+    (err) => {
+      console.log(err)
+    }
+  }
 
-    let toast = this.toastCtrl.create({
-      message: "Logged out",
-      duration: 3000,
-    }).present()
+  logout() {
+    this.djangoProvider.logoutService().subscribe(
+      (data) => {
+        this.navCtrl.setRoot(LoginPage)
+        this.storage.remove('token')
+        this.events.unsubscribe('loadItems')
+        let toast = this.toastCtrl.create({
+          message: "Logged out",
+          duration: 3000,
+        }).present()
+    }),
+    (err) => {
+      console.log(err)
+    }
   }
 }

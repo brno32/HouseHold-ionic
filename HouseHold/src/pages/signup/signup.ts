@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { NavController, ToastController, AlertController } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import { LoginPage } from '../login/login';
 import { ListPage } from '../list/list';
+import { GroupPage } from '../group/group';
 
-import firebase from 'firebase';
+import { DjangoProvider } from '../../providers/django/django';
 
 @Component({
   selector: 'page-signup',
@@ -11,50 +13,55 @@ import firebase from 'firebase';
 })
 export class SignupPage {
 
-  name: string = ''
   email: string = ''
   password: string = ''
 
   constructor(
+    public djangoProvider: DjangoProvider,
     public navCtrl: NavController,
     public toastCtrl: ToastController,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    private storage: Storage,
   ) {
   }
 
   signUp() {
-    firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-      .then((data) => {
-        let newUser: firebase.User = data.user
-        newUser.updateProfile({
-          displayName: this.name,
-          photoURL: "",
-        }).then(() => {
-          console.log("Updated")
+    let user = {
+      username: this.email,
+      password: this.password,
+    }
 
-          this.alertCtrl.create({
-            title: "Account Created",
-            message: "Your account has been created successfully",
-            buttons: [
-              {
-                text: "Ok",
-                handler: () => {
-                  this.navCtrl.setRoot(ListPage)
-                }
-              }
-            ],
-          }).present()
-        }).catch((err) => {
-          console.log(err)
-        })
+    this.djangoProvider.registerService(user).subscribe(
+      data => {
+        this.djangoProvider.loginService(user).subscribe(
+          data => {
+            if (data.hasOwnProperty('auth_token')) {
+              this.storage.set('token', data['auth_token'])
+              this.navCtrl.setRoot(GroupPage)
+              this.showSuccessToast()
+            }
+          },
+          err => {
+            // TODO: handle all possible errors and display message to user
+            console.log(err)
+            this.toastCtrl.create({
+              message: "Username and password do not match.",
+              duration: 3000,
+            }).present()
+          }
+        )
+      },
+      err => {
+        console.log("Error occured")
+      }
+    )
+  }
 
-    }).catch((err) => {
-      console.log(err)
-      this.toastCtrl.create({
-        message: err.message,
-        duration: 3000,
-      }).present()
-    })
+  showSuccessToast() {
+    let toast = this.toastCtrl.create({
+      message: "Account created successfully!",
+      duration: 3000,
+    }).present();
   }
 
   goBack() {
