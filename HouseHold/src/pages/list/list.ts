@@ -519,11 +519,11 @@ export class ListPage {
               console.log(data)
               this.sortItem(data)
               this.numberOfItems += 1
+              this.loadItems()
             }),
             (err) => {
               console.log(err)
             }
-            this.loadItems()
 
             let toast = this.toastCtrl.create({
               message: "Added " + data.name + "!",
