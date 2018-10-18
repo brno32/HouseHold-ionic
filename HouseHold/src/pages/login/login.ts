@@ -14,7 +14,6 @@ export class LoginPage {
 
   email: string = ''
   password: string = ''
-  flag = true
 
   constructor(
     public djangoProvider: DjangoProvider,
@@ -23,6 +22,17 @@ export class LoginPage {
     public events: Events,
     private storage: Storage,
   ) {}
+
+  ionViewDidLoad() {
+    this.storage.get('token').then((token) => {
+      if (token != null && token != '') {
+          this.navCtrl.setRoot(ListPage)
+      }
+    },
+    (err) => {
+      console.log(err)
+    })
+  }
 
   login() {
     let user = {

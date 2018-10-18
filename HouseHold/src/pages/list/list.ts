@@ -58,7 +58,7 @@ export class ListPage {
     private storage: Storage,
   ) {
     events.subscribe('loadItems', (topic, data) => {
-    this.loadItems()
+      this.loadItems()
     })
   }
 
@@ -79,7 +79,7 @@ export class ListPage {
     this.populatedCategories.add(item.category)
 
     if (item.isChecked) {
-      var index = 0
+      let index = this.categorized_items[item.category].length
       for (let i in this.categorized_items[item.category]) {
         if (this.categorized_items[item.category][i].isChecked) {
           index = Number(i); break
@@ -265,7 +265,6 @@ export class ListPage {
             this.createGroupPrompt()
           }
           else {
-            // this.firebaseProvider.createGroupService(data)
             let toast = this.toastCtrl.create({
               message: "Created " + data.name + "!",
               duration: 3000,
