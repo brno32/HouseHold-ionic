@@ -198,7 +198,7 @@ export class ListPage {
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked')
-            this.editItem(item, index)
+            this.editItemPrompt(item, index)
           }
         },
         {
@@ -316,7 +316,7 @@ export class ListPage {
     this.addItemPrompt(category)
   }
 
-  editItem(item, index) {
+  editItemPrompt(item, index) {
     let editPrompt = this.alertCtrl.create({
     title: item.name + ' in ' + item.category,
     enableBackdropDismiss: false,
@@ -394,7 +394,7 @@ export class ListPage {
         role: 'cancel',
         handler: data => {
           console.log('Cancel clicked')
-          this.editItem(item, index)
+          this.editItemPrompt(item, index)
         }
       },
       {
@@ -451,7 +451,7 @@ export class ListPage {
           role: 'cancel',
           handler: data => {
             console.log('Cancel clicked')
-            this.editItem(item, index)
+            this.editItemPrompt(item, index)
           }
         },
         {
@@ -508,33 +508,37 @@ export class ListPage {
         {
           text: 'Add',
           handler: data => {
-            let item = {
-              name: data.name,
-              isChecked: false,
-              category: category,
-              group: this.groupID,
-            }
-            this.djangoProvider.addItemService(item).subscribe(
-              (data) => {
-              console.log(data)
-              this.sortItem(data)
-              this.numberOfItems += 1
-              this.loadItems()
-            }),
-            (err) => {
-              console.log(err)
-            }
-
-            let toast = this.toastCtrl.create({
-              message: "Added " + data.name + "!",
-              duration: 3000,
-            }).present()
+            this.addItem(data, category)
           }
         }
       ]
     })
 
     itemPrompt.present()
+  }
+
+  addItem(data, category) {
+    let item = {
+      name: data.name,
+      isChecked: false,
+      category: category,
+      group: this.groupID,
+    }
+    this.djangoProvider.addItemService(item).subscribe(
+      (data) => {
+      console.log(data)
+      this.sortItem(data)
+      this.numberOfItems += 1
+      this.loadItems()
+    }),
+    (err) => {
+      console.log(err)
+    }
+
+    let toast = this.toastCtrl.create({
+      message: "Added " + data.name + "!",
+      duration: 3000,
+    }).present()
   }
 
   checkout() {
